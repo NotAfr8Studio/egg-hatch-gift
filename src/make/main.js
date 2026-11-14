@@ -208,11 +208,13 @@ async function qrImage() {
   x.fillStyle = '#2b2437'; x.fillRect(22, 22, W - 44, H - 44);
   x.fillStyle = '#f7efd6'; x.fillRect(26, 26, W - 52, H - 52);
   x.textAlign = 'center'; x.fillStyle = '#2b2437';
+  var tight = function (px) { if ('wordSpacing' in x) x.wordSpacing = Math.round(-px * 0.5) + 'px'; }; // same word spacing as the page
+  tight(28);
   x.font = font(28); x.fillText('A BIRTHDAY EGG', W / 2, 100);
   var line = 'FOR ' + name, px = 28; x.font = font(px); while (px > 12 && x.measureText(line).width > W - 100) { px -= 2; x.font = font(px); }
   x.fillStyle = '#c9583f'; x.fillText(line, W / 2, 150);
   drawQR(qr, x, (W - q) / 2, 185, cell, '#2b2437', '#ffffff');
-  x.fillStyle = '#5f8f94'; x.font = font(20); x.fillText('SCAN ME, THEN TAP THE EGG', W / 2, 185 + q + 60);
+  x.fillStyle = '#5f8f94'; x.font = font(20); tight(20); x.fillText('SCAN ME, THEN TAP THE EGG', W / 2, 185 + q + 60);
   return new Promise(function (res) { c.toBlob(function (b) { res(b); }, 'image/png'); });
 }
 function fileName() { return 'egg-for-' + (clean($('name').value).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'a-friend') + '.png'; }

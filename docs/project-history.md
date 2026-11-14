@@ -38,6 +38,22 @@ framing they landed on beard and background and gave a far too dark tone. Now: s
 pixels from the middle of the cut-out, darkest 55% and brightest 8% dropped, median of the rest.
 Can be overridden with a colour picker.
 
+## 2026-11-14: Commits under the owner's GitHub account, repo public
+Superseded the "Not Afr8 Studio" placeholder identity of earlier the same day: NotAfr8Studio is
+the owner's own GitHub account, so commits use its noreply address
+(`<id>+NotAfr8Studio@users.noreply.github.com`) and link to the account without exposing an
+email. Repo made public on the owner's go; not deployed.
+
+## 2026-11-14: Pixel font words pulled closer on /make
+Press Start 2P gives a space the width of a full letter, so titles and buttons read as
+separate blocks. `word-spacing: -0.5em` on every pixel-font element (and the QR card) brings
+them to normal text spacing. The game itself keeps its spacing.
+
+## 2026-11-14: The /make preview fills its frame
+The game picks a whole-device-pixel cell size. In the small preview frame on a 1.5x screen that
+rounded down to two thirds, with a thick border, and a frame resized after load didn't always
+re-layout. The preview now uses the exact fit, and layout also follows a ResizeObserver.
+
 ## 2026-11-14: Saves per gift
 `egg-save-<hash of the link>`, so a test run of your own gift, or two gifts on one phone, never
 share progress. The `#unlocked` backup link of the private version is gone: the hash now holds

@@ -19,7 +19,8 @@ not checked beyond that label.
 - `wild.mp3`: "[FREE] Pokemon Go - Wild Pokemon Battle Theme (No copyright music)" by GameBeats,
   https://www.youtube.com/watch?v=QW9XDyx4Aiw
 - `rap.mp3`: "Happy Birthday Hippo Rap" by Mike Heim, https://www.youtube.com/watch?v=hzgr_wpdENI
-- `trainer.mp3`: "[FREE] Pokemon - VS Trainer (No copyright music)". **Source link not recorded.**
+- `trainer.mp3`: "[FREE] Pokemon - VS Trainer (No copyright music)" by GameBeats,
+  https://www.youtube.com/watch?v=x1BVnREabOw (link found and added 14 November 2026)
 
 Titles and uploaders read from YouTube's oEmbed data on 14 November 2026.
 
