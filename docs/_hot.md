@@ -9,8 +9,7 @@ Tested live: QR decodes to the https link, the egg opens from it, taps count, sa
 ## Next
 1. Owner: scan a QR with a real phone; send a long link through WhatsApp and iMessage to see it
    stays clickable.
-2. Owner's question about the /make preview "face being more centered": waiting for which face
-   is meant (3D preview or the photo right after upload).
+2. Owner tests the new version on his phone: tall oval, date field, empty gift link.
 
 ## Parked
 - Mixamo (Adobe) terms not verified: Adobe's FAQ blocks automated reading. Owner to read it.

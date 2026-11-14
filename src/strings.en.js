@@ -132,7 +132,7 @@ export const S = {
     claim: (store) => store ? 'CLAIM ON ' + store : 'CLAIM GIFT',
     claimHint: 'Tap the button and follow the steps to claim it.',
     redeem: (store) => store ? 'REDEEM ON ' + store : 'REDEEM',
-    missing: 'No gift card in this egg. Just the hatch!',
+    missing: 'No gift card inside this egg. Your present comes another way!',
     demoKind: 'DEMO EGG',
     demoNote: 'MAKE YOUR OWN!',
     demoHint: 'This is a demo egg. Make one for a friend, with their face and a gift card inside.',

@@ -19,7 +19,8 @@ export async function loadGift() {
       store: shout(g.store), amount: g.amount, claimBy: g.claimBy, redeem: safeUrl(g.redeem),
       face: g.face, tone: g.tone,
     });
-    if (GIFT.kind === 'link' && !GIFT.url) GIFT.kind = 'none';
+    // an empty (or unsafe) link or code means: no gift card in this egg, the present comes another way
+    if ((GIFT.kind === 'link' && !GIFT.url) || (GIFT.kind === 'code' && !GIFT.code)) GIFT.kind = 'none';
     return 'gift';
   } catch (e) {
     console.warn('This gift link could not be read:', e && e.message);

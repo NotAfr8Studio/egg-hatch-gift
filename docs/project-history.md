@@ -68,3 +68,15 @@ asks. Mixamo's own terms could not be read automatically and are still unverifie
 Then, on the owner's go: Vercel project `egg-hatch-gift`, linked to the GitHub repo, live at
 https://egg-hatch-gift.vercel.app. Static Vite build; no environment variables, because no gift
 is ever part of the build.
+
+## 2026-11-14: Tall oval, optional gift link, a date field that works on iPhone
+Owner's test on his phone. The oval filled the wide face area, so it only lost its corners and
+looked like ROUNDED on the character: it is now a tall, face-shaped oval (0.74 x the height wide).
+Checked on the 3D preview: square, oval and circle now read clearly differently.
+The gift link or code is optional (owner's call): people may hand over the present in person
+afterwards. An empty field makes the egg's card say the present comes another way; only text
+that isn't a web link is still an error.
+iPhone Safari gives an empty date field no height and its own minimum width, so it looked empty
+and stuck out of the form. Fixed height, no minimum width, a "Pick a date" hint (desktop
+browsers' own dd/mm/yyyy hidden behind it until the field is in use) and a CLEAR button, since
+the iPhone date wheel can't empty the field.

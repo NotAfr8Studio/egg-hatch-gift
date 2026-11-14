@@ -19,7 +19,9 @@ export function createFaceEditor(canvas, onChange) {
   function mk(w, h) { var c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
   function shapePath(x, w, h) {
     x.beginPath();
-    if (ED.shape === 'oval') x.ellipse(w / 2, h / 2, w / 2, h / 2, 0, 0, Math.PI * 2);
+    // a face-shaped oval: taller than wide (the patch itself is wide, so an oval filling it would
+    // only lose its corners and look like ROUNDED)
+    if (ED.shape === 'oval') x.ellipse(w / 2, h / 2, h * 0.37, h / 2, 0, 0, Math.PI * 2);
     else if (ED.shape === 'circle') x.arc(w / 2, h / 2, h / 2, 0, Math.PI * 2);
     else if (ED.shape === 'rounded') {
       var r = h * 0.24; x.moveTo(r, 0); x.arcTo(w, 0, w, h, r); x.arcTo(w, h, 0, h, r); x.arcTo(0, h, 0, 0, r); x.arcTo(0, 0, w, 0, r); x.closePath();

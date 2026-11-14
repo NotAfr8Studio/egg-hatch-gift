@@ -91,7 +91,13 @@ radio('kinds', 'kind', function (v) {
   $('gift-help').hidden = v === 'code';
   showErr('gift', ''); schedule();
 });
-['gift', 'store', 'amount', 'redeem', 'claimby'].forEach(function (id) { $(id).addEventListener('input', schedule); });
+['gift', 'store', 'amount', 'redeem', 'claimby'].forEach(function (id) { $(id).addEventListener('input', schedule); $(id).addEventListener('change', schedule); });
+// the date field: hide the "Pick a date" hint once there is a date, and offer CLEAR (iPhone's
+// date wheel has no way to empty it again)
+function dateUI() { var has = !!$('claimby').value; $('claimby').parentNode.classList.toggle('has-value', has); $('claimby-clear').hidden = !has; }
+['input', 'change'].forEach(function (t) { $('claimby').addEventListener(t, dateUI); });
+$('claimby-clear').addEventListener('click', function () { $('claimby').value = ''; dateUI(); schedule(); });
+dateUI();
 $('store').addEventListener('input', function () { $('redeem').placeholder = isSteam() ? STEAM_REDEEM_URL : 'https://'; });
 function isSteam() { return /^steam$/i.test(clean($('store').value)); }
 
@@ -128,16 +134,16 @@ function fields() {
 function validate() {
   var ok = true, g = fields();
   if (!g.name) { showErr('name', 'Who is it for? The egg needs a name.'); ok = false; }
+  // The link or code is optional: some people hand over the present in person afterwards.
+  // An empty field becomes "no gift card" in the egg; only a link that isn't a link is an error.
   if (F.kind === 'link') {
     var raw = clean($('gift').value);
-    if (!raw) { showErr('gift', 'Paste the claim link here, or pick CODE or NO GIFT.'); ok = false; }
-    else if (!g.gift) { showErr('gift', 'That does not look like a web link. It should start with https://'); ok = false; }
+    if (raw && !g.gift) { showErr('gift', 'That does not look like a web link. It should start with https://'); ok = false; }
     else if (byteLength(g.gift) > LIMIT.gift) { showErr('gift', 'That link is too long to fit in a QR code.'); ok = false; }
     else showErr('gift', '');
   }
   if (F.kind === 'code') {
-    if (!g.gift) { showErr('gift', 'Type or paste the code here.'); ok = false; }
-    else if (byteLength(g.gift) > LIMIT.gift) { showErr('gift', 'That code is too long.'); ok = false; }
+    if (byteLength(g.gift) > LIMIT.gift) { showErr('gift', 'That code is too long.'); ok = false; }
     else showErr('gift', '');
   }
   return ok;

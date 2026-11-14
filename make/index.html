@@ -103,7 +103,7 @@
     <div id="giftfields">
       <label class="lab" for="gift" id="gift-lab">Claim link</label>
       <input id="gift" class="in" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://" aria-describedby="gift-help gift-err">
-      <p class="help" id="gift-help">Paste the link from the gift card email, <b>without opening it</b>. Opening it and signing in can claim the gift for yourself (Steam does this).</p>
+      <p class="help" id="gift-help">Paste the link from the gift card email, <b>without opening it</b>. Opening it and signing in can claim the gift for yourself (Steam does this). Don't have one? Leave it empty: the card then says the present comes another way.</p>
       <p class="err" id="gift-err" hidden></p>
       <div class="two">
         <div>
@@ -121,10 +121,14 @@
         <p class="help" id="redeem-help">Becomes a REDEEM button next to COPY CODE.</p>
       </div>
       <label class="lab" for="claimby">Claim before <span class="opt">optional</span></label>
-      <input id="claimby" class="in" type="date">
+      <div class="datewrap">
+        <input id="claimby" class="in" type="date">
+        <span class="dateph" id="claimby-ph" aria-hidden="true">Pick a date</span>
+        <button class="btn quiet small" id="claimby-clear" type="button" hidden>CLEAR</button>
+      </div>
       <p class="help">Shown on the card. Steam email gifts must be accepted within 30 days of sending.</p>
     </div>
-    <p class="help" id="nogift-help" hidden>Just the egg and the hatch. The card says there is no gift inside.</p>
+    <p class="help" id="nogift-help" hidden>Just the egg and the hatch. Handy when you give the present in person afterwards: the card says it comes another way.</p>
   </section>
 
   <section class="box" aria-labelledby="h4">
