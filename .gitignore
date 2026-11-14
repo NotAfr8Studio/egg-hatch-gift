@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+.vercel/
+*.log
+.DS_Store
+Thumbs.db
+
+# originals and personal source files, never pushed
+private/
+# a face photo for your own copy stays on your machine (see README)
+public/face.*

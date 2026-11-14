@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Hatch</title>
+<!-- Plum and hidden until style.css arrives (in dev it is loaded by JS, so the raw page would flash). style.css makes the body visible. -->
+<style>html, body { background: #2b2437; } body { visibility: hidden; }</style>
+<meta name="description" content="A birthday egg. Tap it until it hatches.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#2b2437">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Hatch">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/png" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+<!-- Invisible: padded by the iPhone safe-area insets so layout.js can measure them. -->
+<div id="safe" aria-hidden="true"></div>
+<main id="app">
+  <div id="phone" data-screen="start" data-hud="outline">
+    <canvas id="gl"></canvas>
+    <div class="nogl" id="nogl" data-str="nogl"></div>
+
+    <div class="scr on-start on-cont gb titlebox"><div class="tt" data-str="title"></div><div class="ts" data-str="subtitle"></div></div>
+
+    <div class="scr on-tap on-enc plate" id="eplate">
+      <div class="r1" data-str="plate.egg"></div>
+      <div class="hprow"><span class="hpl" data-str="plate.hp"></span><span class="bar"><i id="barfill"></i></span></div>
+      <div class="r2" id="count"></div>
+    </div>
+    <div class="scr on-enc plate" id="foe" style="height: calc(var(--u) * 30); width: calc(var(--u) * 104)">
+      <div class="r1"><span data-str="plate.raccoon"></span><span class="rt" data-str="plate.lv"></span></div>
+      <div class="hprow"><span class="hpl" data-str="plate.hp"></span><span class="bar"><i id="foebar" style="width: 100%"></i></span></div>
+    </div>
+    <div class="scr on-snake plate" id="splate" style="height: calc(var(--u) * 32)">
+      <div class="r1"><span data-str="plate.shoo"></span><span class="rt" id="shoo"></span></div>
+      <div class="lives" id="lives"><i></i></div>
+    </div>
+    <div class="scr on-chase plate" id="chplate" style="height: calc(var(--u) * 30); width: calc(var(--u) * 104)">
+      <div class="r1"><span data-str="plate.escape"></span><span class="rt" id="chdist"></span></div>
+      <div class="hprow"><span class="hpl" data-str="plate.rac"></span><span class="bar"><i id="chbar"></i></span></div>
+    </div>
+    <div class="scr on-run plate" id="rplate" style="height: calc(var(--u) * 44); width: calc(var(--u) * 104)">
+      <div class="r1"><span data-str="plate.run"></span><span class="rt" id="rdist"></span></div>
+      <div class="hprow"><span class="bar"><i id="rbar"></i></span></div>
+      <div class="lives" id="rlives"><i></i><i></i><i></i></div>
+    </div>
+    <div class="scr on-clean plate" id="cplate" style="height: calc(var(--u) * 30)">
+      <div class="r1"><span id="ctool"></span><span class="rt" id="cpct">0%</span></div>
+      <div class="hprow"><span class="bar"><i id="cbar"></i></span></div>
+    </div>
+    <div class="scr on-start on-cont on-tap on-hatch on-snake on-enc on-run on-clean on-chase box snd" id="snd" data-btn="snd" role="button" data-aria="aria.soundOn"><svg class="mg on" viewBox="0 0 16 12" shape-rendering="crispEdges" aria-hidden="true"><rect x="7" y="0" width="2" height="1" fill="#2b2437"/><rect x="6" y="1" width="1" height="1" fill="#2b2437"/><rect x="7" y="1" width="1" height="1" fill="#eef0f6"/><rect x="8" y="1" width="1" height="1" fill="#d9524a"/><rect x="9" y="1" width="1" height="1" fill="#2b2437"/><rect x="5" y="2" width="1" height="1" fill="#2b2437"/><rect x="6" y="2" width="2" height="1" fill="#eef0f6"/><rect x="8" y="2" width="1" height="1" fill="#d9524a"/><rect x="9" y="2" width="1" height="1" fill="#2b2437"/><rect x="13" y="2" width="1" height="1" fill="#2b2437"/><rect x="1" y="3" width="4" height="1" fill="#2b2437"/><rect x="5" y="3" width="2" height="1" fill="#eef0f6"/><rect x="7" y="3" width="1" height="1" fill="#c4c8d6"/><rect x="8" y="3" width="1" height="1" fill="#d9524a"/><rect x="9" y="3" width="1" height="1" fill="#2b2437"/><rect x="14" y="3" width="1" height="1" fill="#2b2437"/><rect x="0" y="4" width="1" height="1" fill="#2b2437"/><rect x="1" y="4" width="2" height="1" fill="#eef0f6"/><rect x="3" y="4" width="2" height="1" fill="#d9524a"/><rect x="5" y="4" width="1" height="1" fill="#eef0f6"/><rect x="6" y="4" width="2" height="1" fill="#c4c8d6"/><rect x="8" y="4" width="1" height="1" fill="#d9524a"/><rect x="9" y="4" width="1" height="1" fill="#2b2437"/><rect x="11" y="4" width="1" height="1" fill="#2b2437"/><rect x="14" y="4" width="1" height="1" fill="#2b2437"/><rect x="0" y="5" width="1" height="1" fill="#2b2437"/><rect x="1" y="5" width="2" height="1" fill="#c4c8d6"/><rect x="3" y="5" width="2" height="1" fill="#d9524a"/><rect x="5" y="5" width="3" height="1" fill="#c4c8d6"/><rect x="8" y="5" width="1" height="1" fill="#d9524a"/><rect x="9" y="5" width="1" height="1" fill="#2b2437"/><rect x="11" y="5" width="1" height="1" fill="#2b2437"/><rect x="14" y="5" width="1" height="1" fill="#2b2437"/><rect x="0" y="6" width="1" height="1" fill="#2b2437"/><rect x="1" y="6" width="2" height="1" fill="#c4c8d6"/><rect x="3" y="6" width="2" height="1" fill="#d9524a"/><rect x="5" y="6" width="3" height="1" fill="#c4c8d6"/><rect x="8" y="6" width="1" height="1" fill="#d9524a"/><rect x="9" y="6" width="1" height="1" fill="#2b2437"/><rect x="11" y="6" width="1" height="1" fill="#2b2437"/><rect x="14" y="6" width="1" height="1" fill="#2b2437"/><rect x="0" y="7" width="1" height="1" fill="#2b2437"/><rect x="1" y="7" width="2" height="1" fill="#8d92a8"/><rect x="3" y="7" width="2" height="1" fill="#a8363a"/><rect x="5" y="7" width="1" height="1" fill="#8d92a8"/><rect x="6" y="7" width="2" height="1" fill="#c4c8d6"/><rect x="8" y="7" width="1" height="1" fill="#d9524a"/><rect x="9" y="7" width="1" height="1" fill="#2b2437"/><rect x="11" y="7" width="1" height="1" fill="#2b2437"/><rect x="14" y="7" width="1" height="1" fill="#2b2437"/><rect x="1" y="8" width="2" height="1" fill="#2b2437"/><rect x="3" y="8" width="2" height="1" fill="#4a4260"/><rect x="5" y="8" width="3" height="1" fill="#8d92a8"/><rect x="8" y="8" width="1" height="1" fill="#d9524a"/><rect x="9" y="8" width="1" height="1" fill="#2b2437"/><rect x="14" y="8" width="1" height="1" fill="#2b2437"/><rect x="2" y="9" width="1" height="1" fill="#2b2437"/><rect x="3" y="9" width="2" height="1" fill="#4a4260"/><rect x="5" y="9" width="1" height="1" fill="#2b2437"/><rect x="6" y="9" width="2" height="1" fill="#8d92a8"/><rect x="8" y="9" width="1" height="1" fill="#a8363a"/><rect x="9" y="9" width="1" height="1" fill="#2b2437"/><rect x="13" y="9" width="1" height="1" fill="#2b2437"/><rect x="3" y="10" width="2" height="1" fill="#2b2437"/><rect x="6" y="10" width="1" height="1" fill="#2b2437"/><rect x="7" y="10" width="1" height="1" fill="#8d92a8"/><rect x="8" y="10" width="1" height="1" fill="#a8363a"/><rect x="9" y="10" width="1" height="1" fill="#2b2437"/><rect x="7" y="11" width="2" height="1" fill="#2b2437"/></svg><svg class="mg off" viewBox="0 0 16 12" shape-rendering="crispEdges" aria-hidden="true"><rect x="7" y="0" width="2" height="1" fill="#2b2437"/><rect x="12" y="0" width="2" height="1" fill="#2b2437"/><rect x="6" y="1" width="1" height="1" fill="#2b2437"/><rect x="7" y="1" width="1" height="1" fill="#eef0f6"/><rect x="8" y="1" width="1" height="1" fill="#d9524a"/><rect x="9" y="1" width="1" height="1" fill="#2b2437"/><rect x="11" y="1" width="1" height="1" fill="#2b2437"/><rect x="12" y="1" width="2" height="1" fill="#d9524a"/><rect x="14" y="1" width="1" height="1" fill="#2b2437"/><rect x="5" y="2" width="1" height="1" fill="#2b2437"/><rect x="6" y="2" width="2" height="1" fill="#eef0f6"/><rect x="8" y="2" width="1" height="1" fill="#d9524a"/><rect x="9" y="2" width="2" height="1" fill="#2b2437"/><rect x="11" y="2" width="2" height="1" fill="#d9524a"/><rect x="13" y="2" width="1" height="1" fill="#2b2437"/><rect x="1" y="3" width="4" height="1" fill="#2b2437"/><rect x="5" y="3" width="2" height="1" fill="#eef0f6"/><rect x="7" y="3" width="1" height="1" fill="#c4c8d6"/><rect x="8" y="3" width="1" height="1" fill="#d9524a"/><rect x="9" y="3" width="3" height="1" fill="#d9524a"/><rect x="12" y="3" width="1" height="1" fill="#2b2437"/><rect x="0" y="4" width="1" height="1" fill="#2b2437"/><rect x="1" y="4" width="2" height="1" fill="#eef0f6"/><rect x="3" y="4" width="2" height="1" fill="#d9524a"/><rect x="5" y="4" width="1" height="1" fill="#eef0f6"/><rect x="6" y="4" width="2" height="1" fill="#c4c8d6"/><rect x="8" y="4" width="2" height="1" fill="#d9524a"/><rect x="10" y="4" width="2" height="1" fill="#2b2437"/><rect x="0" y="5" width="1" height="1" fill="#2b2437"/><rect x="1" y="5" width="2" height="1" fill="#c4c8d6"/><rect x="3" y="5" width="2" height="1" fill="#d9524a"/><rect x="5" y="5" width="2" height="1" fill="#c4c8d6"/><rect x="7" y="5" width="2" height="1" fill="#d9524a"/><rect x="9" y="5" width="1" height="1" fill="#2b2437"/><rect x="0" y="6" width="1" height="1" fill="#2b2437"/><rect x="1" y="6" width="2" height="1" fill="#c4c8d6"/><rect x="3" y="6" width="2" height="1" fill="#d9524a"/><rect x="5" y="6" width="1" height="1" fill="#c4c8d6"/><rect x="6" y="6" width="2" height="1" fill="#d9524a"/><rect x="8" y="6" width="1" height="1" fill="#d9524a"/><rect x="9" y="6" width="1" height="1" fill="#2b2437"/><rect x="0" y="7" width="1" height="1" fill="#2b2437"/><rect x="1" y="7" width="2" height="1" fill="#8d92a8"/><rect x="3" y="7" width="2" height="1" fill="#a8363a"/><rect x="5" y="7" width="2" height="1" fill="#d9524a"/><rect x="7" y="7" width="1" height="1" fill="#c4c8d6"/><rect x="8" y="7" width="1" height="1" fill="#d9524a"/><rect x="9" y="7" width="1" height="1" fill="#2b2437"/><rect x="1" y="8" width="2" height="1" fill="#2b2437"/><rect x="3" y="8" width="3" height="1" fill="#d9524a"/><rect x="6" y="8" width="2" height="1" fill="#8d92a8"/><rect x="8" y="8" width="1" height="1" fill="#d9524a"/><rect x="9" y="8" width="1" height="1" fill="#2b2437"/><rect x="1" y="9" width="1" height="1" fill="#2b2437"/><rect x="2" y="9" width="2" height="1" fill="#d9524a"/><rect x="4" y="9" width="1" height="1" fill="#4a4260"/><rect x="5" y="9" width="1" height="1" fill="#2b2437"/><rect x="6" y="9" width="2" height="1" fill="#8d92a8"/><rect x="8" y="9" width="1" height="1" fill="#a8363a"/><rect x="9" y="9" width="1" height="1" fill="#2b2437"/><rect x="0" y="10" width="1" height="1" fill="#2b2437"/><rect x="1" y="10" width="2" height="1" fill="#d9524a"/><rect x="3" y="10" width="2" height="1" fill="#2b2437"/><rect x="6" y="10" width="1" height="1" fill="#2b2437"/><rect x="7" y="10" width="1" height="1" fill="#8d92a8"/><rect x="8" y="10" width="1" height="1" fill="#a8363a"/><rect x="9" y="10" width="1" height="1" fill="#2b2437"/><rect x="1" y="11" width="2" height="1" fill="#2b2437"/><rect x="7" y="11" width="2" height="1" fill="#2b2437"/></svg></div>
+
+    <div class="scr on-start on-cont on-tap on-hatch on-snake on-enc on-run on-clean on-chase gb dialog" id="dialog">
+      <span id="dtext"></span>
+      <span class="prompt" id="prompt"></span>
+      <span class="tri"></span>
+    </div>
+    <div class="gb dialog choice" id="choice"><div id="chead"></div><div class="copts" id="copts"></div></div>
+
+    <div class="scr on-error dim"></div>
+    <div class="scr on-error gb err">
+      <div class="bh" data-str="error.head"></div>
+      <p data-str="error.body"></p>
+      <div class="btn" id="refresh" data-btn="refresh" data-str="error.btn"></div>
+    </div>
+
+    <div class="scr on-gift box card" id="card" data-btn="card">
+      <div class="stripe"></div>
+      <div class="ct" data-str="home.cardTitle"></div>
+      <div class="cs" data-str="home.cardOpen"></div>
+      <div class="star"></div>
+    </div>
+    <div class="scr on-gift gb menu">
+      <span class="mi sel" data-btn="viewcard" data-str="home.viewCard"></span>
+      <span class="mi" data-btn="games" data-str="home.games"></span>
+      <span class="mi" data-btn="replay" data-str="home.replay"></span>
+      <span class="mi" data-btn="again" data-str="home.again"></span>
+    </div>
+    <div class="scr on-lib gb libbox"><div class="lh" data-str="lib.head"></div><div id="liblist"></div></div>
+    <div class="scr on-lib credit" data-str="lib.credit"></div>
+    <div class="cardview" id="cardview">
+      <div class="cv-in">
+        <img id="cardimg" data-alt="aria.giftCard">
+        <p class="cv-t" id="cvhint"></p>
+        <a class="btn2 big" id="claim" data-btn="claim" target="_blank" rel="noopener noreferrer"></a>
+        <a class="btn2 big" id="makeown" data-btn="make" href="/make/" data-str="home.make" hidden></a>
+        <div class="cv-b"><span class="btn2" id="copybtn" data-btn="copycode" data-str="home.copyCode"></span><a class="btn2" id="redeem" data-btn="redeem" target="_blank" rel="noopener noreferrer"></a></div>
+        <div class="cv-b"><span class="btn2" data-btn="closecard" data-str="home.close"></span></div>
+      </div>
+    </div>
+    <div class="hint" id="hint"></div>
+    <div class="tool" id="tool" data-t="none"></div>
+    <div class="wipe" id="wipe"></div>
+    <div id="flash"></div>
+  </div>
+</main>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

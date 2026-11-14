@@ -1,0 +1,42 @@
+/* Dev panel only. Loaded by dev/panel.js, which is only imported when import.meta.env.DEV is true. */
+:root { --bg: #231d30; --panel: #2e2640; --line: #473d5e; --text: #f1ead6; --muted: #a99fc0; --accent: #e9a5a0; --ink: #2b2437; --butter: #f3d98b;
+  --body: 'Instrument Sans', system-ui, -apple-system, Segoe UI, sans-serif; }
+#dev { font-family: var(--body); font-size: 14px; line-height: 1.5; color: var(--text); -webkit-user-select: auto; user-select: auto; }
+#dev * { box-sizing: border-box; }
+#devtoggle { position: fixed; left: 6px; bottom: 6px; z-index: 200; font: 700 11px var(--body); color: var(--ink); background: var(--butter); border: 0; border-radius: 6px; padding: 5px 8px; cursor: pointer; opacity: .85; }
+#devdrawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(340px, 92vw); z-index: 150; background: var(--bg); border-left: 1px solid var(--line); overflow: auto; padding: 14px; display: flex; flex-direction: column; gap: 14px; }
+#devdrawer[hidden] { display: none; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.opts { display: flex; flex-direction: column; gap: 14px; }
+.group h2 { margin: 0; }
+
+.tab, .chip { font-family: var(--body); font-weight: 600; font-size: 14px; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; cursor: pointer; white-space: nowrap; }
+.tab[aria-pressed="true"], .chip[aria-pressed="true"] { background: var(--rose); color: var(--ink); border-color: var(--rose); }
+.tab:focus-visible, .chip:focus-visible, .act:focus-visible { outline: 2px solid var(--butter); outline-offset: 2px; }
+.group { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.group h2 { margin: 0; font-family: var(--pixel); font-size: 10px; font-weight: 400; color: var(--butter); line-height: 1.5; }
+.group p { margin: 0; color: var(--muted); font-size: 14px; }
+.row { display: flex; flex-wrap: wrap; gap: 6px; }
+.act { font-family: var(--body); font-weight: 600; font-size: 14px; color: var(--ink); background: var(--butter); border: 0; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+.act.quiet { background: var(--line); color: var(--text); }
+.swatches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.sw { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); }
+.sw i { display: block; height: 26px; border-radius: 6px; border: 1px solid rgba(255,255,255,.12); }
+code { font-family: ui-monospace, Menlo, monospace; font-size: 0.88em; background: var(--bg); padding: 1px 5px; border-radius: 4px; }
+input[type=file] { display: none; }
+
+.editor { position: fixed; inset: 0; z-index: 300; background: rgba(20, 15, 30, .85); display: flex; padding: 14px; overflow: auto; }
+.editor[hidden] { display: none; }
+.ed-card { margin: auto; width: 100%; max-width: 380px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.ed-card h2 { margin: 0; font-family: var(--pixel); font-size: 11px; font-weight: 400; color: var(--butter); line-height: 1.5; }
+.ed-stage { display: flex; justify-content: center; }
+#edc { width: 100%; max-width: 320px; aspect-ratio: 1; border-radius: 8px; border: 1px solid var(--line); touch-action: none; cursor: grab; background-color: #3a3150; background-image: linear-gradient(45deg, #463c5e 25%, transparent 25%, transparent 75%, #463c5e 75%), linear-gradient(45deg, #463c5e 25%, transparent 25%, transparent 75%, #463c5e 75%); background-size: 16px 16px; background-position: 0 0, 8px 8px; }
+#edc.paint { cursor: crosshair; }
+.ed-ctl { display: flex; flex-direction: column; gap: 10px; }
+.ed-ctl label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
+.ed-ctl[hidden], .ed-ctl label[hidden] { display: none; }
+.ed-ctl p { margin: 0; color: var(--muted); font-size: 13px; }
+input[type=range] { width: 100%; accent-color: var(--accent); }
+.ed-prev { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 13px; }
+#edp { width: 72px; height: 72px; image-rendering: pixelated; border-radius: 6px; border: 1px solid var(--line); background-color: #3a3150; background-image: linear-gradient(45deg, #463c5e 25%, transparent 25%, transparent 75%, #463c5e 75%), linear-gradient(45deg, #463c5e 25%, transparent 25%, transparent 75%, #463c5e 75%); background-size: 12px 12px; background-position: 0 0, 6px 6px; }
+.row.end { justify-content: flex-end; }
