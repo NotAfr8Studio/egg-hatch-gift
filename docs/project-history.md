@@ -97,3 +97,7 @@ face, tests pixels for skin in YCbCr colour space (separates colour from brightn
 for light and dark skin and drops walls, hair and whites), then takes the median of the brighter
 part. Picking the most common skin colour was tried first and landed on the shadow side.
 Tested on one face only, so PICK FROM PHOTO is the real safety net.
+
+## 2026-11-14: No emoji, anywhere
+Owner's call, firmly: no emoji in any copy. The egg emoji in the /make intro looked bad. This
+overrides the emoji habit described in voice.md for this project.
