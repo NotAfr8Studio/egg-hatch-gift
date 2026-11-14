@@ -97,10 +97,16 @@ h2 .n { display: inline-grid; place-items: center; width: 28px; height: 28px; ba
 .ctl { margin-top: 12px; }
 .slide { display: grid; grid-template-columns: 64px 1fr; align-items: center; gap: 10px; margin: 10px 0; font-weight: 600; }
 input[type=range] { width: 100%; accent-color: var(--teal); min-height: 32px; }
-.tone { display: flex; align-items: center; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+/* skin colour sits right under the photo, so it's seen while editing */
+.tone { display: flex; align-items: center; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
 .tone .lab { margin: 0; }
-.sw { width: 28px; height: 28px; border: 2px solid var(--ink); display: inline-block; }
-input[type=color] { width: 46px; height: 40px; border: 2px solid var(--ink); background: var(--paper); padding: 2px; cursor: pointer; }
+/* the colour square IS the picker: tapping it opens the phone's own colour picker */
+input[type=color] { width: 46px; height: 46px; border: 2px solid var(--ink); background: var(--paper); padding: 3px; cursor: pointer; -webkit-appearance: none; appearance: none; }
+input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
+input[type=color]::-webkit-color-swatch { border: 0; }
+.stage canvas.picking { cursor: crosshair; }
+#picking { position: absolute; left: 8px; right: 8px; bottom: 8px; margin: 0; padding: 8px; text-align: center; pointer-events: none;
+  font: 10px/1.5 var(--pixel); word-spacing: -0.5em; color: var(--cream); background: var(--ink); }
 
 .pv { position: sticky; top: 12px; }
 .screen { border: 3px solid var(--ink); background: var(--ink); aspect-ratio: 1 / 2; }

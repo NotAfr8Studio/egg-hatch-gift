@@ -24,7 +24,7 @@ editor.setTone(F.tone);
 
 $('pick').addEventListener('click', function () { $('file').click(); });
 $('change').addEventListener('click', function () { $('file').click(); });
-$('remove').addEventListener('click', function () { editor.clear(); photoUI(false); schedule(); });
+$('remove').addEventListener('click', function () { stopPicking(); editor.clear(); photoUI(false); schedule(); });
 $('file').addEventListener('change', function () {
   var f = this.files && this.files[0]; this.value = ''; if (!f) return;
   $('file-err').hidden = true;
@@ -48,13 +48,22 @@ $('fitreset').addEventListener('click', function () { editor.resetFit(); });
 
 // skin tone: AUTO samples the cheeks; picking a colour switches AUTO off
 function hex(c) { return '#' + c.map(function (v) { return ('0' + v.toString(16)).slice(-2); }).join(''); }
-function setTone(c) { F.tone = c; editor.setTone(c); $('tone-sw').style.background = hex(c); $('tone').value = hex(c); }
+function setTone(c) { F.tone = c; editor.setTone(c); $('tone').value = hex(c); }
 function autoTone() { var t = editor.sampleTone(); if (t) setTone(t); }
+function toneManual() { F.toneAuto = false; $('tone-auto').setAttribute('aria-pressed', 'false'); }
+// the colour square is the colour picker itself: tapping it opens the phone's own picker
 $('tone').addEventListener('input', function () {
-  var v = this.value; F.toneAuto = false; $('tone-auto').setAttribute('aria-pressed', 'false');
+  var v = this.value; toneManual();
   setTone([parseInt(v.slice(1, 3), 16), parseInt(v.slice(3, 5), 16), parseInt(v.slice(5, 7), 16)]); schedule();
 });
-$('tone-auto').addEventListener('click', function () { F.toneAuto = true; this.setAttribute('aria-pressed', 'true'); autoTone(); if (!editor.patch()) setTone([241, 201, 165]); schedule(); });
+$('tone-auto').addEventListener('click', function () { F.toneAuto = true; this.setAttribute('aria-pressed', 'true'); stopPicking(); autoTone(); if (!editor.patch()) setTone([241, 201, 165]); schedule(); });
+// PICK FROM PHOTO: the next tap on the photo takes the colour under the finger
+function stopPicking() { editor.picking(null); $('tone-pick').setAttribute('aria-pressed', 'false'); $('picking').hidden = true; }
+$('tone-pick').addEventListener('click', function () {
+  if (this.getAttribute('aria-pressed') === 'true') { stopPicking(); return; }
+  this.setAttribute('aria-pressed', 'true'); $('picking').hidden = false;
+  editor.picking(function (c) { toneManual(); setTone(c); stopPicking(); schedule(); });
+});
 setTone(F.tone);
 
 // ---------- the preview (the real game, in a frame) ----------
@@ -79,16 +88,18 @@ radio(null, 'view', function (v) { F.view = v; sendView(); }, document.querySele
 function shout(s) { return new TextDecoder().decode(clipBytes(clean(s).toUpperCase(), LIMIT.name)); }
 $('name').addEventListener('input', function () {
   $('name-say').querySelector('.say').textContent = 'HAPPY BIRTHDAY! ' + (shout(this.value) || 'FRIEND') + '!';
-  if (byteLength(clean(this.value)) > LIMIT.name) showErr('name', 'A bit long: it gets cut to ' + shout(this.value) + '.'); else showErr('name', '');
+  if (byteLength(clean(this.value)) > LIMIT.name) showErr('name', 'A bit long. The egg cuts it to ' + shout(this.value) + '.'); else showErr('name', '');
   schedule();
 });
 radio('kinds', 'kind', function (v) {
   F.kind = v;
   $('giftfields').hidden = v === 'none'; $('nogift-help').hidden = v !== 'none';
   $('redeem-wrap').hidden = v !== 'code';
-  $('gift-lab').textContent = v === 'code' ? 'Gift card code' : 'Claim link';
+  $('gift-lab').textContent = v === 'code' ? 'Gift card code' : 'Gift card link';
   $('gift').type = v === 'code' ? 'text' : 'url'; $('gift').placeholder = v === 'code' ? 'XXXXX-XXXXX-XXXXX' : 'https://';
-  $('gift-help').hidden = v === 'code';
+  $('gift-help').textContent = v === 'code'
+    ? 'Type or paste the code. It shows up on the card with a COPY button. No code yet? Leave it empty.'
+    : 'Any gift card works. No link yet? Leave it empty and the card tells them the present comes another way.';
   showErr('gift', ''); schedule();
 });
 ['gift', 'store', 'amount', 'redeem', 'claimby'].forEach(function (id) { $(id).addEventListener('input', schedule); $(id).addEventListener('change', schedule); });
@@ -108,8 +119,8 @@ radio('tapchips', 'taps', function (v) {
 });
 $('taps').addEventListener('input', function () { F.taps = Math.max(TAPS.min, Math.min(TAPS.max, Math.round(+this.value || 0))); tapsHelp(); schedule(); });
 function tapsHelp() {
-  var t = F.taps, words = t <= 1000 ? 'Quick: a few minutes of tapping.' : t <= 2000 ? 'About ten minutes of tapping.' : t <= 4000 ? '4,000 worked well at a birthday party.' : t <= 10000 ? 'A proper challenge: spread over a day or two.' : 'A marathon. Progress saves, so it can take days.';
-  $('taps-help').textContent = words + ' Five mini games come along the way, at 20, 40, 60, 80 and 90%.';
+  var t = F.taps, words = t <= 1000 ? 'A quick one. Just a few minutes of tapping.' : t <= 2000 ? 'About ten minutes of tapping.' : t <= 4000 ? '4,000 was perfect at a birthday party.' : t <= 10000 ? 'Now we\'re talking. Spread it over a day or two.' : 'Absolute marathon. Progress saves, so they can take days.';
+  $('taps-help').textContent = words + ' Five mini games pop up along the way.';
 }
 
 // Generic radio-group helper for the chip rows: role="radio" buttons with data-<key>.
@@ -133,12 +144,12 @@ function fields() {
 }
 function validate() {
   var ok = true, g = fields();
-  if (!g.name) { showErr('name', 'Who is it for? The egg needs a name.'); ok = false; }
+  if (!g.name) { showErr('name', 'Who\'s it for? The egg needs a name.'); ok = false; }
   // The link or code is optional: some people hand over the present in person afterwards.
   // An empty field becomes "no gift card" in the egg; only a link that isn't a link is an error.
   if (F.kind === 'link') {
     var raw = clean($('gift').value);
-    if (raw && !g.gift) { showErr('gift', 'That does not look like a web link. It should start with https://'); ok = false; }
+    if (raw && !g.gift) { showErr('gift', 'That doesn\'t look like a link. It should start with https://'); ok = false; }
     else if (byteLength(g.gift) > LIMIT.gift) { showErr('gift', 'That link is too long to fit in a QR code.'); ok = false; }
     else showErr('gift', '');
   }
@@ -181,7 +192,7 @@ async function build() {
 
 $('make').addEventListener('click', async function () {
   $('make-err').hidden = true;
-  if (!validate()) { $('make-err').textContent = 'Almost: check the fields marked above.'; $('make-err').hidden = false; var bad = document.querySelector('[aria-invalid="true"]'); if (bad) bad.focus(); return; }
+  if (!validate()) { $('make-err').textContent = 'Almost there. Check the red bits above.'; $('make-err').hidden = false; var bad = document.querySelector('[aria-invalid="true"]'); if (bad) bad.focus(); return; }
   F.made = true; clearTimeout(timer); await build();
   $('result').hidden = false; $('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
@@ -192,13 +203,13 @@ function showResult() {
   if (!validate()) { $('result').classList.add('stale'); return; }
   $('result').classList.remove('stale');
   var qr = last.qr, cv = $('qr');
-  if (!qr) { $('qrinfo').textContent = 'Too much for one QR code. Shorten the gift link, or remove the photo.'; cv.width = cv.height = 0; return; }
+  if (!qr) { $('qrinfo').textContent = 'Whoa, too much for one QR code. Try a shorter gift link, or no photo.'; cv.width = cv.height = 0; return; }
   var cell = Math.max(2, Math.floor(400 / (qr.n + 8)));
   cv.width = cv.height = (qr.n + 8) * cell;
   drawQR(qr, cv.getContext('2d'), 0, 0, cell, '#2b2437', '#ffffff');
-  var ease = qr.version <= 15 ? 'easy to scan' : qr.version <= 22 ? 'scans fine from a screen or a print' : 'dense: hold the phone close, or print it big';
-  var detail = last.step ? ' Face: ' + last.step[0] + ' x ' + last.step[1] + ' pixels, ' + last.step[2] + ' colours.' : '';
-  $('qrinfo').textContent = 'QR code ' + qr.n + ' x ' + qr.n + ' squares, ' + ease + '.' + detail;
+  var ease = qr.version <= 22 ? 'Scans fine from a screen or a print.' : 'This one is busy. Hold the phone close, or print it big.';
+  var detail = last.step ? ' Their face made it in at ' + last.step[0] + ' x ' + last.step[1] + ' pixels.' : '';
+  $('qrinfo').textContent = 'Your egg is ready! ' + ease + detail;
   $('open').href = link();
 }
 

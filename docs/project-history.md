@@ -80,3 +80,20 @@ iPhone Safari gives an empty date field no height and its own minimum width, so 
 and stuck out of the form. Fixed height, no minimum width, a "Pick a date" hint (desktop
 browsers' own dd/mm/yyyy hidden behind it until the field is in use) and a CLEAR button, since
 the iPhone date wheel can't empty the field.
+
+## 2026-11-14: Any gift card, no warnings, copy in the owner's voice
+Owner's call: the maker read like a Steam tool. The claim link warnings ("don't open it, signing
+in claims it", "Steam gifts expire in 30 days") are gone: people know their own gift cards, and
+any card works. The page copy was rewritten playful and direct, in the published register of
+`F:\OS\context\voice.md` (still a draft there), with no dashes joining clauses. "CLAIM LINK"
+became "GIFT LINK".
+
+## 2026-11-14: Skin colour: tap the photo, tap the swatch, better AUTO
+Owner: AUTO picked the wrong colour on most of his photos, and the little colour square did
+nothing when tapped. Now the square is the colour picker itself; PICK FROM PHOTO takes the
+colour under the next tap on the photo (a 7 x 7 average of what is on screen); and the controls
+moved right under the photo so they're seen while editing. AUTO now keeps only the middle of the
+face, tests pixels for skin in YCbCr colour space (separates colour from brightness, so it holds
+for light and dark skin and drops walls, hair and whites), then takes the median of the brighter
+part. Picking the most common skin colour was tried first and landed on the shadow side.
+Tested on one face only, so PICK FROM PHOTO is the real safety net.

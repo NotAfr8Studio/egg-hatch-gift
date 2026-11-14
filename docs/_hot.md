@@ -9,9 +9,12 @@ Tested live: QR decodes to the https link, the egg opens from it, taps count, sa
 ## Next
 1. Owner: scan a QR with a real phone; send a long link through WhatsApp and iMessage to see it
    stays clickable.
-2. Owner tests the new version on his phone: tall oval, date field, empty gift link.
+2. Owner tests the new version on his phone: PICK FROM PHOTO, the new AUTO, the new copy.
 
 ## Parked
+- **Idea (owner, 14 Nov 2026): a small "buy me a coffee" button** at the end of /make, for people
+  who want to thank him. Not now: first see how many people actually use the maker. If it gets
+  used a lot, add it then.
 - Mixamo (Adobe) terms not verified: Adobe's FAQ blocks automated reading. Owner to read it.
 - iPhone Safari can wipe a site's saves after 7 days without a visit. Option A has no backup.
 - On a phone, the /make preview sits below the editor: you scroll to see it.

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Make an egg</title>
-<meta name="description" content="Make a birthday egg for a friend: their face, a gift card, and a QR code to share.">
+<meta name="description" content="Make a birthday egg for your friend. They tap it until it hatches into a tiny dancing version of them, with your gift inside.">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#2b2437">
 <link rel="icon" type="image/png" href="/icons/icon-192.png">
@@ -18,7 +18,7 @@
   <img class="logo" src="/icons/icon-192.png" alt="" width="56" height="56">
   <div>
     <h1>EGG HATCH GIFT</h1>
-    <p>Make a birthday egg for a friend. They tap it until it hatches into a dancing little character with their face, and then they get your gift card.</p>
+    <p>Make a birthday egg for your friend 🥚 They tap it thousands of times, survive a few mini games, and then it hatches into a tiny dancing version of them. With your gift waiting inside.</p>
   </div>
 </header>
 
@@ -27,13 +27,13 @@
     <h2 id="h1"><span class="n">1</span>WHO IS IT FOR?</h2>
     <label class="lab" for="name">Their name</label>
     <input id="name" class="in" type="text" autocomplete="off" autocapitalize="words" spellcheck="false" maxlength="24" aria-describedby="name-say name-err">
-    <p class="help" id="name-say">The egg says: <b class="say">HAPPY BIRTHDAY! FRIEND!</b></p>
+    <p class="help" id="name-say">The egg will say: <b class="say">HAPPY BIRTHDAY! FRIEND!</b></p>
     <p class="err" id="name-err" hidden></p>
   </section>
 
   <section class="box" aria-labelledby="h2">
     <h2 id="h2"><span class="n">2</span>THEIR FACE</h2>
-    <p class="help">A photo where they look into the camera. It ends up small and pixely on the character, which is half the fun.</p>
+    <p class="help">Grab a photo where they look straight into the camera. It ends up tiny and pixely on the character, and honestly that's the best part.</p>
     <div class="facebox">
       <div class="ed">
         <div class="tabs" role="tablist" aria-label="Face steps">
@@ -44,11 +44,22 @@
           <canvas id="edc" width="480" height="400" tabindex="0" aria-label="Face editor. Drag to move, pinch or scroll to resize, arrow keys to nudge."></canvas>
           <div class="empty" id="edempty">
             <button class="btn" id="pick" type="button">ADD A PHOTO</button>
-            <p>No photo? The egg gets a pixel face instead.</p>
+            <p>No photo? Then they get a pixel face. Still cute.</p>
           </div>
+          <p class="picking" id="picking" hidden>Tap their cheek on the photo</p>
         </div>
         <input type="file" id="file" accept="image/*" hidden>
-        <p class="err" id="file-err" hidden>That photo could not be opened. Try a JPG or PNG.</p>
+        <p class="err" id="file-err" hidden>Hmm, that photo won't open. Try a JPG or PNG.</p>
+
+        <div id="tone-box" hidden>
+          <div class="tone">
+            <span class="lab" id="tone-lab">Skin colour</span>
+            <input type="color" id="tone" aria-labelledby="tone-lab">
+            <button class="chip" id="tone-pick" type="button" aria-pressed="false">PICK FROM PHOTO</button>
+            <button class="chip" id="tone-auto" type="button" aria-pressed="true">AUTO</button>
+          </div>
+          <p class="help small">Colours the body and everything around the face. Not quite right? Tap PICK FROM PHOTO and then their cheek, or tap the colour to choose one yourself.</p>
+        </div>
 
         <div class="ctl" id="ctl-cut" role="tabpanel" aria-labelledby="tab-cut">
           <div class="chips" role="radiogroup" aria-label="Shape" id="shapes">
@@ -59,24 +70,15 @@
           </div>
           <label class="slide">Zoom <input type="range" id="zoom" min="50" max="600" value="100"></label>
           <label class="slide">Turn <input type="range" id="rot" min="-45" max="45" value="0"></label>
-          <p class="help">Drag the photo until the face fills the shape. Then go to SQUASH.</p>
+          <p class="help">Drag the photo until their face fills the shape. Then hit SQUASH.</p>
         </div>
         <div class="ctl" id="ctl-fit" role="tabpanel" aria-labelledby="tab-fit" hidden>
           <label class="slide">Width <input type="range" id="sx" min="30" max="200" value="100"></label>
           <label class="slide">Height <input type="range" id="sy" min="30" max="200" value="100"></label>
-          <p class="help">Squash it, stretch it, drag it around. Wide, tall, tiny or huge all work.</p>
-          <button class="btn quiet" id="fitreset" type="button">RESET</button>
+          <p class="help">Squash it, stretch it, drag it around. The weirder the better.</p>
+          <div class="row"><button class="btn quiet" id="fitreset" type="button">RESET</button></div>
         </div>
 
-        <div id="tone-box" hidden>
-          <div class="tone">
-            <span class="lab">Skin colour</span>
-            <span class="sw" id="tone-sw" aria-hidden="true"></span>
-            <input type="color" id="tone" aria-label="Pick the skin colour">
-            <button class="chip" id="tone-auto" type="button" aria-pressed="true">AUTO</button>
-          </div>
-          <p class="help small">Fills the body and everything around the face. AUTO takes it from the face.</p>
-        </div>
         <div class="row" id="photo-actions" hidden>
           <button class="btn quiet" id="change" type="button">OTHER PHOTO</button>
           <button class="btn quiet" id="remove" type="button">NO PHOTO</button>
@@ -96,19 +98,19 @@
   <section class="box" aria-labelledby="h3">
     <h2 id="h3"><span class="n">3</span>THE GIFT</h2>
     <div class="chips" role="radiogroup" aria-label="Kind of gift" id="kinds">
-      <button class="chip" role="radio" aria-checked="true" data-kind="link">CLAIM LINK</button>
+      <button class="chip" role="radio" aria-checked="true" data-kind="link">GIFT LINK</button>
       <button class="chip" role="radio" aria-checked="false" data-kind="code">CODE</button>
       <button class="chip" role="radio" aria-checked="false" data-kind="none">NO GIFT</button>
     </div>
     <div id="giftfields">
-      <label class="lab" for="gift" id="gift-lab">Claim link</label>
+      <label class="lab" for="gift" id="gift-lab">Gift card link</label>
       <input id="gift" class="in" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://" aria-describedby="gift-help gift-err">
-      <p class="help" id="gift-help">Paste the link from the gift card email, <b>without opening it</b>. Opening it and signing in can claim the gift for yourself (Steam does this). Don't have one? Leave it empty: the card then says the present comes another way.</p>
+      <p class="help" id="gift-help">Any gift card works. No link yet? Leave it empty and the card tells them the present comes another way.</p>
       <p class="err" id="gift-err" hidden></p>
       <div class="two">
         <div>
           <label class="lab" for="store">Shop <span class="opt">optional</span></label>
-          <input id="store" class="in" type="text" autocomplete="off" maxlength="12" placeholder="Steam">
+          <input id="store" class="in" type="text" autocomplete="off" maxlength="12" placeholder="Amazon">
         </div>
         <div>
           <label class="lab" for="amount">Amount <span class="opt">optional</span></label>
@@ -118,7 +120,7 @@
       <div id="redeem-wrap" hidden>
         <label class="lab" for="redeem">Where to redeem it <span class="opt">optional</span></label>
         <input id="redeem" class="in" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://">
-        <p class="help" id="redeem-help">Becomes a REDEEM button next to COPY CODE.</p>
+        <p class="help" id="redeem-help">Turns into a REDEEM button next to COPY CODE.</p>
       </div>
       <label class="lab" for="claimby">Claim before <span class="opt">optional</span></label>
       <div class="datewrap">
@@ -126,9 +128,9 @@
         <span class="dateph" id="claimby-ph" aria-hidden="true">Pick a date</span>
         <button class="btn quiet small" id="claimby-clear" type="button" hidden>CLEAR</button>
       </div>
-      <p class="help">Shown on the card. Steam email gifts must be accepted within 30 days of sending.</p>
+      <p class="help">Shows up on the card, so they don't wait too long.</p>
     </div>
-    <p class="help" id="nogift-help" hidden>Just the egg and the hatch. Handy when you give the present in person afterwards: the card says it comes another way.</p>
+    <p class="help" id="nogift-help" hidden>Just the egg and the hatch. Perfect if you hand over the present in person. The card tells them it comes another way.</p>
   </section>
 
   <section class="box" aria-labelledby="h4">
@@ -144,7 +146,7 @@
       <label class="lab" for="taps">Taps</label>
       <input id="taps" class="in short" type="number" inputmode="numeric" min="100" max="50000" step="100" value="4000">
     </div>
-    <p class="help" id="taps-help">4,000 worked well at a birthday party. Five mini games come along the way, at 20, 40, 60, 80 and 90%.</p>
+    <p class="help" id="taps-help"></p>
   </section>
 
   <section class="box" aria-labelledby="h5">
@@ -160,19 +162,19 @@
         <button class="btn" id="copy" type="button">COPY LINK</button>
         <a class="btn quiet" id="open" target="_blank" rel="noopener">OPEN THE EGG</a>
       </div>
-      <p class="help small center" id="copied" hidden>Link copied.</p>
-      <p class="help small">Changed something above? The QR code and link update by themselves.</p>
+      <p class="help small center" id="copied" hidden>Link copied!</p>
+      <p class="help small">Changed your mind about something above? The QR code updates by itself.</p>
     </div>
     <div class="note">
-      <p><b>Nothing gets uploaded.</b> The name, the photo and the gift go into the link itself, made right here on this device. The photo is shrunk to a few hundred pixels first.</p>
-      <p><b>Whoever has the QR code or the link can open the egg</b>, and the gift once it hatches. So only give it to the birthday person.</p>
-      <p>Their progress saves on their own phone. Opening the link yourself to test it is fine: your taps stay on your phone.</p>
+      <p><b>Nothing gets uploaded.</b> Everything, even the photo, gets packed into the link itself. Right here on your device.</p>
+      <p><b>Anyone with the QR code or link can open the egg</b>, and the gift once it hatches. So keep it between you and the birthday person.</p>
+      <p>Their progress saves on their own phone. Want to test it first? Go for it, your taps stay on your phone.</p>
     </div>
   </section>
 </main>
 <footer class="foot">
   <p>Character based on <a href="https://sketchfab.com/3d-models/square-head-character-free-demo-2b56f800db6e437b80d2f5cfcc16885c" target="_blank" rel="noopener">"Square Head Character (Free Demo)" by joaobaltieri</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>), with a new face, a new rig, an eggshell on top and Mixamo animations.</p>
-  <p>Music: <a href="https://opengameart.org/content/nintendo-style-upbeat-music-loop-05" target="_blank" rel="noopener">"Upbeat Music Loop 05" by PlayOnLoop</a> (CC-BY), plus "no copyright" uploads from YouTube: <a href="https://www.youtube.com/watch?v=CL-n01v3CRE" target="_blank" rel="noopener">Littleroot Town Theme</a> (Gamehabit), <a href="https://www.youtube.com/watch?v=QW9XDyx4Aiw" target="_blank" rel="noopener">Wild Pokemon Battle Theme</a> (GameBeats), <a href="https://www.youtube.com/watch?v=hzgr_wpdENI" target="_blank" rel="noopener">Happy Birthday Hippo Rap</a> (Mike Heim) and <a href="https://www.youtube.com/watch?v=x1BVnREabOw" target="_blank" rel="noopener">VS Trainer</a> (GameBeats). Own something here? Get in touch and it comes out.</p>
+  <p>Music: <a href="https://opengameart.org/content/nintendo-style-upbeat-music-loop-05" target="_blank" rel="noopener">"Upbeat Music Loop 05" by PlayOnLoop</a> (CC BY), plus "no copyright" uploads from YouTube: <a href="https://www.youtube.com/watch?v=CL-n01v3CRE" target="_blank" rel="noopener">Littleroot Town Theme</a> (Gamehabit), <a href="https://www.youtube.com/watch?v=QW9XDyx4Aiw" target="_blank" rel="noopener">Wild Pokemon Battle Theme</a> (GameBeats), <a href="https://www.youtube.com/watch?v=hzgr_wpdENI" target="_blank" rel="noopener">Happy Birthday Hippo Rap</a> (Mike Heim) and <a href="https://www.youtube.com/watch?v=x1BVnREabOw" target="_blank" rel="noopener">VS Trainer</a> (GameBeats). Own something here? Get in touch and it comes out.</p>
 </footer>
 <script type="module" src="/src/make/main.js"></script>
 </body>

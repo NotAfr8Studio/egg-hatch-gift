@@ -69,8 +69,21 @@ export function createFaceEditor(canvas, onChange) {
   var pts = new Map(), pinch = null;
   function pos(e) { var r = canvas.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * PW, y: (e.clientY - r.top) / r.height * PH }; }
   canvas.addEventListener('pointerdown', function (e) {
-    if (!ED.img) return; canvas.setPointerCapture(e.pointerId); pts.set(e.pointerId, pos(e)); pinch = null; e.preventDefault();
+    if (!ED.img) return; e.preventDefault();
+    if (pickCb) { pickAt(pos(e)); return; }
+    canvas.setPointerCapture(e.pointerId); pts.set(e.pointerId, pos(e)); pinch = null;
   });
+  // PICK FROM PHOTO: average a small spot of what is on screen under the finger
+  var pickCb = null;
+  function pickAt(p) {
+    var r = Math.round(3 * K), cx = Math.round(p.x * K), cy = Math.round(p.y * K);
+    var x0 = Math.max(0, cx - r), y0 = Math.max(0, cy - r), w = Math.min(canvas.width, cx + r) - x0, h = Math.min(canvas.height, cy + r) - y0;
+    if (w <= 0 || h <= 0) return;
+    var d = view.getImageData(x0, y0, w, h).data, s = [0, 0, 0], n = 0;
+    for (var i = 0; i < d.length; i += 4) { s[0] += d[i]; s[1] += d[i + 1]; s[2] += d[i + 2]; n++; }
+    var cb = pickCb; pickCb = null; canvas.classList.remove('picking');
+    cb([Math.round(s[0] / n), Math.round(s[1] / n), Math.round(s[2] / n)]);
+  }
   canvas.addEventListener('pointermove', function (e) {
     if (!pts.has(e.pointerId)) return;
     var p = pos(e), old = pts.get(e.pointerId); pts.set(e.pointerId, p);
@@ -108,22 +121,28 @@ export function createFaceEditor(canvas, onChange) {
     if (inputs.onSync) inputs.onSync();
   }
 
-  // Skin tone for the body, from the middle of the cut-out (wherever the face was framed): keep
-  // skin-coloured pixels (red over green over blue), drop the darkest 55% (hair, beard, eyes,
-  // shadow: a bearded test face is mostly that) and the brightest 8% (shine), and take the median.
+  // AUTO skin tone, from the cut-out (wherever the face was framed). The first version kept any
+  // reddish pixel in a box, which let beige walls and background in. Now:
+  //  1. only the middle of the face counts (an oval over cheeks and forehead, not the edges),
+  //  2. a standard skin test in YCbCr colour space, which separates colour from brightness and so
+  //     holds for light and dark skin (greys, blues, greens and whites drop out),
+  //  3. of what's left, the darkest 55% (beard, eyebrows, shadow side) and the brightest 8% (shine)
+  //     are dropped, and the median of the rest wins. Picking the most common colour instead was
+  //     tried and landed on the shadow side of the face.
   function sampleTone() {
     if (!ED.img) return null;
-    var d = patchCv.getContext('2d').getImageData(0, 0, PW, PH).data, px = [], any = [];
-    for (var y = Math.round(PH * 0.2); y < Math.round(PH * 0.8); y++)
-      for (var x = Math.round(PW * 0.25); x < Math.round(PW * 0.75); x++) {
+    var d = patchCv.getContext('2d').getImageData(0, 0, PW, PH).data, px = [];
+    for (var y = 0; y < PH; y += 2)
+      for (var x = 0; x < PW; x += 2) {
         var i = (y * PW + x) * 4; if (d[i + 3] < 220) continue;
-        var p = [d[i], d[i + 1], d[i + 2]]; any.push(p);
-        if (p[0] > p[1] && p[1] >= p[2] - 6 && p[0] - p[2] > 12) px.push(p);
+        var dx = (x / PW - 0.5) / 0.32, dy = (y / PH - 0.48) / 0.4; if (dx * dx + dy * dy > 1) continue;
+        var r = d[i], g = d[i + 1], b = d[i + 2];
+        var Y = 0.299 * r + 0.587 * g + 0.114 * b, cb = 128 - 0.1687 * r - 0.3313 * g + 0.5 * b, cr = 128 + 0.5 * r - 0.4187 * g - 0.0813 * b;
+        if (Y < 35 || Y > 245 || cr < 133 || cr > 180 || cb < 77 || cb > 130) continue;
+        px.push([r, g, b, Y]);
       }
-    if (px.length < 40) px = any;
-    if (!px.length) return null;
-    var lum = function (p) { return p[0] * 0.3 + p[1] * 0.59 + p[2] * 0.11; };
-    px.sort(function (a, b) { return lum(a) - lum(b); });
+    if (px.length < 12) return null;
+    px.sort(function (a, b) { return a[3] - b[3]; });
     var lo = Math.floor(px.length * 0.55); px = px.slice(lo, Math.max(lo + 1, Math.floor(px.length * 0.92)));
     var med = function (k) { var a = px.map(function (p) { return p[k]; }).sort(function (p, q) { return p - q; }); return a[a.length >> 1]; };
     return [med(0), med(1), med(2)];
@@ -140,6 +159,8 @@ export function createFaceEditor(canvas, onChange) {
     set: function (k, v) { ED[k] = v; clampAll(); changed(); },
     resetFit: function () { ED.sx = 1; ED.sy = 1; ED.fx = 0; ED.fy = 0; changed(); syncInputs(); },
     setTone: function (t) { ED.tone = t; draw(); },
+    // turn tap-to-pick on (with what to do with the colour) or off (null)
+    picking: function (cb) { pickCb = cb || null; canvas.classList.toggle('picking', !!cb); },
     redraw: draw,
     patch: function () { return ED.img ? patchCv : null; },
     sampleTone: sampleTone,

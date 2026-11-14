@@ -135,7 +135,7 @@ export const S = {
     missing: 'No gift card inside this egg. Your present comes another way!',
     demoKind: 'DEMO EGG',
     demoNote: 'MAKE YOUR OWN!',
-    demoHint: 'This is a demo egg. Make one for a friend, with their face and a gift card inside.',
+    demoHint: 'This is just a demo egg. Make one for your friend, with their face and a gift inside!',
     make: 'MAKE AN EGG',
     copyCode: 'COPY CODE',
     close: 'CLOSE',
