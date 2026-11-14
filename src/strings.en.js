@@ -147,8 +147,8 @@ export const S = {
     head: 'MINI GAMES',
     back: 'BACK',
     names: { snake: 'SNAKES', run: 'ROLL RUN', enc: 'RACCOON', clean: 'MUD WASH', chase: 'CHASE' },
-    // CC-BY asks for this credit in the game itself; the rest of the music is listed in CREDITS.md
-    credit: 'MUSIC: PLAYONLOOP.COM AND OTHERS',
+    // CC-BY asks for these credits in the game itself; everything else is listed in CREDITS.md
+    credit: 'MUSIC: PLAYONLOOP.COM AND OTHERS\nMODEL: JOAOBALTIERI (CC BY)',
     notPlayed: 'NOT PLAYED YET',
     justForFun: 'JUST FOR FUN',
     bestSnake: (b) => 'BEST ' + b + ' SHOOED',

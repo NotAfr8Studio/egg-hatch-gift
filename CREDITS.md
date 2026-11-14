@@ -26,8 +26,17 @@ Titles and uploaders read from YouTube's oEmbed data on 14 November 2026.
 
 ## Character
 
-The hatchling (`public/hatchling.glb`) is a low-poly character rigged and animated with Mixamo
-(Adobe). Its colours come from a palette texture. **Licence of the base mesh not yet recorded.**
+**"Square Head Character (Free Demo)"** by joaobaltieri
+https://sketchfab.com/3d-models/square-head-character-free-demo-2b56f800db6e437b80d2f5cfcc16885c
+Licence: Creative Commons Attribution 4.0 (https://creativecommons.org/licenses/by/4.0/):
+"Author must be credited. Commercial use is allowed." (Sketchfab's licence data for the model,
+read 14 November 2026.) Credited in the game and on the /make page.
+Changes made by Not Afr8 Studio: a different face edited in, re-rigged, an eggshell added on
+top, animated with Mixamo (Adobe), exported as `public/hatchling.glb` (clips `pose`, `jump`,
+`dance`). The game swaps in its own face, skin and eggshell materials.
+
+Mixamo (Adobe) rig and animations: **terms not yet checked from Adobe's own page** (it blocks
+automated reading). Commonly described as royalty free for games; not verified here.
 
 ## Code
 

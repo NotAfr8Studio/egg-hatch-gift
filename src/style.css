@@ -44,7 +44,7 @@ body { visibility: visible; position: fixed; inset: 0; -webkit-touch-callout: no
 .lrow .lb { display: block; font-size: calc(var(--u) * 6); line-height: calc(var(--u) * 9); color: var(--teal); }
 .lrow .lb.new { color: #c9583f; }
 /* music credit under the mini game list (CC-BY asks for it in the game) */
-.credit { left: calc(var(--u) * 6); right: calc(var(--u) * 6); top: calc(var(--u) * 222); text-align: center; font-size: calc(var(--u) * 6); line-height: calc(var(--u) * 9); color: var(--cream);
+.credit { left: calc(var(--u) * 6); right: calc(var(--u) * 6); top: calc(var(--u) * 222); text-align: center; white-space: pre-line; font-size: calc(var(--u) * 6); line-height: calc(var(--u) * 9); color: var(--cream);
   text-shadow: var(--u) 0 0 var(--ink), calc(var(--u) * -1) 0 0 var(--ink), 0 var(--u) 0 var(--ink), 0 calc(var(--u) * -1) 0 var(--ink); pointer-events: none; }
 .cardview { position: absolute; inset: 0; z-index: 7; background: rgba(43, 36, 55, .88); display: none; align-items: center; justify-content: center; }
 .cardview.show { display: flex; }
