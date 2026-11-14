@@ -1,23 +1,24 @@
 # Hot: Egg Hatch Gift
 
 ## In flight (2026-11-14)
-Public on GitHub (github.com/NotAfr8Studio/egg-hatch-gift), on the owner's go. **Not deployed:
-no Vercel project yet.** That needs the owner's go too.
+**Live:** https://egg-hatch-gift.vercel.app (maker: /make/). Code: github.com/NotAfr8Studio/egg-hatch-gift
+(public). Vercel project `egg-hatch-gift` in the owner's team, linked to the repo, production
+branch `main`: **every push to main goes live.** Deployed on the owner's go, 14 Nov 2026.
+Tested live: QR decodes to the https link, the egg opens from it, taps count, saves per gift.
 
 ## Next
-1. Owner's go for Vercel: new project from this repo, framework Vite. Once linked, every push to
-   `main` goes live.
-2. On the live site: scan a QR with a real phone, and send a long link through WhatsApp and
-   iMessage to see that it stays clickable.
-3. Owner's question about the /make preview "face being more centered": open (see below).
+1. Owner: scan a QR with a real phone; send a long link through WhatsApp and iMessage to see it
+   stays clickable.
+2. Owner's question about the /make preview "face being more centered": waiting for which face
+   is meant (3D preview or the photo right after upload).
 
 ## Parked
-- Licence of the Mixamo rig/animations and the base character mesh: not recorded. Owner chose to
-  publish anyway (2026-11-14).
+- Mixamo (Adobe) terms not verified: Adobe's FAQ blocks automated reading. Owner to read it.
 - iPhone Safari can wipe a site's saves after 7 days without a visit. Option A has no backup.
 - On a phone, the /make preview sits below the editor: you scroll to see it.
 
 ## Fresh traps
+- Every push to main deploys. Docs-only commits redeploy too (harmless, but they do).
 - npm runs in `repo\`, not in the project folder above it.
 - Never open a gift's claim link yourself while testing: signing in claims it.
 - The pre-commit privacy hook lives in `.git/hooks/` and reads `..\notes\private-words.txt`;

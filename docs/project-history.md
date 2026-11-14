@@ -58,3 +58,13 @@ re-layout. The preview now uses the exact fit, and layout also follows a ResizeO
 `egg-save-<hash of the link>`, so a test run of your own gift, or two gifts on one phone, never
 share progress. The `#unlocked` backup link of the private version is gone: the hash now holds
 the gift.
+
+## 2026-11-14: Base model credited (CC BY 4.0), deployed on Vercel
+The character's base mesh is "Square Head Character (Free Demo)" by joaobaltieri on Sketchfab,
+CC Attribution 4.0 (Sketchfab licence data: "Author must be credited. Commercial use is
+allowed."). The owner edited in a different face, re-rigged it and added the eggshell. Credited in
+the game (under the mini game list), on /make and in CREDITS.md, with the changes listed as CC BY
+asks. Mixamo's own terms could not be read automatically and are still unverified.
+Then, on the owner's go: Vercel project `egg-hatch-gift`, linked to the GitHub repo, live at
+https://egg-hatch-gift.vercel.app. Static Vite build; no environment variables, because no gift
+is ever part of the build.
