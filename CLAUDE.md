@@ -19,6 +19,9 @@ Current state: `docs/_hot.md`. Why things are the way they are: `docs/project-hi
 - **Everything loads from this site.** `vercel.json` sets a Content-Security-Policy that blocks
   any other source. A new font, script, image or API elsewhere must be added there on purpose;
   `npm run preview` sends the same headers, so test there (dev does not).
+- **The counter sends one word, nothing else.** `src/core/count.js` is the only code that tells a
+  server anything (`api/count.js`): `made`, `opened`, `tapped` or `hatched`. Never add anything
+  from the link or about the person to it.
 - Changing the link format: bump `VERSION` in codec.js and keep decoding the old one, or every
   egg already sent breaks.
 - Dev-only code sits behind `import.meta.env.DEV`; the production build must not contain it.
@@ -28,5 +31,7 @@ Current state: `docs/_hot.md`. Why things are the way they are: `docs/project-hi
 - Never open a gift's claim link while testing. Signing in claims it.
 - The face area on the model is 1.2 : 1; the face patch is stretched over it.
 - Saves are per gift: `egg-save-<id>` in localStorage, id = hash of the link.
+- Counts: the live site writes `eggs:` in Redis, previews `test:eggs:`. `?nocount` on any page
+  stops that browser counting, `?count` undoes it. GET `/api/count?days=7` reads the numbers.
 - The /make preview is the real game in a frame on `/?preview`, talking by `postMessage`
   (same origin only). Nothing is saved there.

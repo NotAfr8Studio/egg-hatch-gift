@@ -18,6 +18,7 @@ import { CL, cleanStep } from './games/mudwash.js';
 import { encStep } from './games/raccoon.js';
 import { GIFT } from './config.js';
 import { loadGift } from './gift/load.js';
+import { countGift } from './core/count.js';
 import { S } from './strings.en.js';
 
 // Fill every [data-str] / [data-aria] / [data-alt] element in index.html from strings.en.js.
@@ -82,7 +83,10 @@ requestAnimationFrame(frame);
 loadGift().then(function (mode) {
   setTotal(GIFT.taps); useSaveKey(GIFT.id);
   if (mode === 'preview') { startPreview(); return; }
-  if (GIFT.face) setGiftFace(GIFT.face, GIFT.tone); else loadFacePng();
+  if (mode === 'gift') countGift('opened', GIFT.id); // first open on this phone only, see core/count.js
+  // A gift without a photo keeps the pixel face, as the /make preview showed it. Only the site's own
+  // egg uses public/face.png, and only when the build found one (vite.config.js).
+  if (GIFT.face) setGiftFace(GIFT.face, GIFT.tone); else if (mode !== 'gift' && __OWN_FACE__) loadFacePng();
   if (mode === 'broken') { setScreen('start', false); say(S.broken); return; }
   boot();
 });

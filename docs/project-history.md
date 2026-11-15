@@ -106,7 +106,8 @@ overrides the emoji habit described in voice.md for this project.
 Owner wants to know how many eggs get made, opened and hatched (the parked coffee button also
 waits on "does anyone use the maker"). Chosen: a tiny function in this repo plus a small Redis
 store (Upstash, added through the Vercel Marketplace) that adds 1 to a named count, per day and
-in total. It accepts only one word from a fixed list: `made`, `opened`, `hatched`. Nothing read
+in total. It accepts only one word from a fixed list: `made`, `opened`, `hatched` (`tapped` added
+later the same day, see "How the egg counter counts"). Nothing read
 from the link is ever sent: not the name, face, gift card, store, amount, date, tap count or gift
 id. Nothing about the person either: no cookies, no visitor id, no country, no device. Counting
 runs on the live site only, never in dev or in the /make preview.
@@ -159,3 +160,59 @@ page, nothing blocked, every request to this site only, /make makes an egg with 
 Sources: the app-security notes in the owner's library (reels by @chris.raroque on adversarial
 review, @securedbycasco on IDOR, @adilet.fndr and @raycfu on costly mistakes and legal traps,
 @peterstewiestartup on scoring instead of blocking).
+
+## 2026-11-15: Eggs don't expire
+Owner asked whether eggs should delete themselves after a few months, to keep data from
+lingering and to protect the server from millions of old links. Decided no, owner agreed:
+- There is nothing to delete. An egg exists only as its link, in chat apps and printed QR codes.
+  A "self-destruct" could only make the game refuse to play after a date; the photo and gift
+  would still sit inside the link, and the decoder is public. It would look safe without being safe.
+- Links cost nothing at rest. Vercel serves the same static files to everyone, so cost follows
+  opens (about 7 MB for a full playthrough, 6 MB of it music), not how many eggs exist. The site
+  is on Hobby, which pauses at its limit instead of billing (general knowledge, not checked
+  against Vercel's docs). If traffic ever nears it, shrink the music first.
+- The sensitive part ends by itself: a claimed gift card is worth nothing, and most cards carry
+  their own end date (CLAIM BEFORE).
+- Real deletion means storing eggs on a server: the database option rejected on 2026-11-14.
+It would also break late openings, long tap marathons and replays a year on.
+
+## 2026-11-15: Gift eggs never ask for the self-host face file
+Eggs without a photo asked for `public/face.png`, which is only meant for a self-hosted copy's
+own egg. The live site has none, so each such egg logged two 404 errors in the console, and on a
+copy that did have one, a no-photo gift would have shown the host's face instead of the pixel face
+/make previewed. Now only the site's own egg loads it, and only when the build found the file
+(`__OWN_FACE__`, set in vite.config.js).
+
+## 2026-11-15: How the egg counter counts
+Four moments, each sent as one word with `sendBeacon` (it survives the page closing): `made` when
+MAKE is pressed (pressing it again on the same egg doesn't recount), `opened` the first time a
+gift link opens on a phone, `tapped` the first tap on the egg, `hatched` the first hatch.
+`tapped` was the owner's addition: it separates friends who played from friends who only looked.
+Considered and dropped: a running total of all taps (fun, but thousands of sends per egg) and
+how eggs leave the maker (copy, QR or share). No public number on the site for now, owner's call.
+The demo egg, the /make preview and dev never count. `?nocount` stops a browser counting, for the
+owner's own testing.
+
+Opening or hatching an egg on the phone that made it doesn't count: makers try their own egg
+first, and without this "opened" would mostly mirror "made". The maker's phone keeps the ids
+of its eggs (a hash of the link) in localStorage and never sends them. A test on a second
+phone still counts; nothing can tell that apart without identifying people.
+
+The numbers are readable by anyone at GET `/api/count` (totals; `?days=N` per day). They are
+only three numbers, and the owner needs a way to read them without the store's password. Cached
+for 5 minutes, because Upstash's free tier is 500K commands a month and a public counter on a
+busy page would otherwise spend it. Previews write `test:eggs:` instead of `eggs:`, so a branch
+can be tried without touching the real counts.
+
+Spam: anyone can call `/api/count` and inflate the numbers, use up the free commands (counting
+then stops until next month) or, at real volume, Vercel's function allowance, and Hobby pauses
+the whole site at its limit. The counter itself must never store addresses to stop that, so
+Vercel's firewall does it: one rate-limit rule on `/api/count`, 10 requests a minute per
+address, answered with 429. Hobby includes one such rule per project (vercel.com/docs/
+vercel-firewall/vercel-waf/rate-limiting, read 2026-11-15). The firewall keeps its own short
+tally per address; this app stores nothing.
+
+Tested: the function against a fake store (only the four words accepted, other sites' pages
+refused, previews kept apart, no store means a quiet 503), then the built site in Chrome, 17
+flows: every request is one word in the body, `text/plain`, no cookie; the maker's own egg,
+repeat opens and repeat taps send nothing.

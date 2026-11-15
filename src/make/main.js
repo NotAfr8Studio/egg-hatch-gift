@@ -1,6 +1,7 @@
 import '../fonts/pixel.css';
 import './make.css';
-import { encodeGift, quantize, LIMIT, byteLength, clean, safeUrl, clipBytes, TAPS } from '../gift/codec.js';
+import { encodeGift, quantize, LIMIT, byteLength, clean, safeUrl, clipBytes, TAPS, giftId } from '../gift/codec.js';
+import { count, mine } from '../core/count.js';
 import { createFaceEditor, readPhoto } from './face.js';
 import { makeQR, drawQR } from './qr.js';
 import { STEAM_REDEEM_URL } from '../config.js';
@@ -195,8 +196,17 @@ $('make').addEventListener('click', async function () {
   $('make-err').hidden = true;
   if (!validate()) { $('make-err').textContent = 'Almost there. Check the red bits above.'; $('make-err').hidden = false; var bad = document.querySelector('[aria-invalid="true"]'); if (bad) bad.focus(); return; }
   F.made = true; clearTimeout(timer); await build();
+  // one word to the counter (core/count.js); pressing MAKE again on the same egg doesn't recount
+  if (last && last.text !== counted) { counted = last.text; count('made'); }
+  ours();
   $('result').hidden = false; $('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
+var counted = '';
+// This phone made the egg in the result: opening or hatching it here is the maker testing, not
+// the friend, so the counter skips it. Called again on every way out, since the link keeps
+// updating as the form changes.
+function ours() { if (last) mine(giftId(last.text)); }
+$('open').addEventListener('click', ours);
 
 function link() { return PREFIX + last.text; }
 function showResult() {
@@ -239,6 +249,7 @@ function fileName() { return 'egg-for-' + (clean($('name').value).toLowerCase().
 
 $('save').addEventListener('click', async function () {
   if (!last || !last.qr) return;
+  ours();
   var b = await qrImage(), a = document.createElement('a'), u = URL.createObjectURL(b);
   a.href = u; a.download = fileName(); document.body.appendChild(a); a.click(); a.remove();
   setTimeout(function () { URL.revokeObjectURL(u); }, 4000);
@@ -247,6 +258,7 @@ if (navigator.share) {
   $('share').hidden = false;
   $('share').addEventListener('click', async function () {
     if (!last || !last.qr) return;
+    ours();
     try {
       var file = new File([await qrImage()], fileName(), { type: 'image/png' });
       if (navigator.canShare && navigator.canShare({ files: [file] })) await navigator.share({ files: [file], title: 'A birthday egg' });
@@ -256,6 +268,7 @@ if (navigator.share) {
 }
 $('copy').addEventListener('click', function () {
   if (!last) return;
+  ours();
   var done = function () { $('copied').hidden = false; setTimeout(function () { $('copied').hidden = true; }, 2500); };
   try { navigator.clipboard.writeText(link()).then(done, function () { prompt('Copy this link:', link()); }); } catch (e) { prompt('Copy this link:', link()); }
 });

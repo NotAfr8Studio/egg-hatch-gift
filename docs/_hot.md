@@ -6,18 +6,27 @@
 branch `main`: **every push to main goes live.** Deployed on the owner's go, 14 Nov 2026.
 Tested live: QR decodes to the https link, the egg opens from it, taps count, saves per gift.
 
-**2026-11-15: egg counter decided, not built.** Own counter (function + Upstash Redis), counting
-`made`, `opened`, `hatched` only; see project-history. Needs the owner to add Upstash to the
-Vercel project before it can run. Nothing pushed.
+**2026-11-15: egg counter built and tested locally (17 flows).** `api/count.js` +
+`src/core/count.js`, counting `made`, `opened`, `tapped`, `hatched`; see project-history. Upstash
+connected (prefix `COUNTER`, production + preview). Shipping on the owner's go: branch
+`egg-counter`, test on its preview against the real store, then main. Read the numbers at
+`/api/count?days=7`.
 
 **2026-11-15: security fixes deployed on the owner's go.** Card names the real site behind
 CLAIM / REDEEM, https only, font shipped with the app, Content-Security-Policy in `vercel.json`,
 /make note extended. Vercel plan: Hobby (owner, 15 Nov), which pauses at its limit, no bill.
+Decided the same day: eggs don't expire (see project-history). Follow-up fix: gift eggs no longer
+ask for the self-host `face.png` (two 404s per no-photo egg); it ships in the counter's commit.
 
 ## Next
-1. Owner: scan a QR with a real phone; send a long link through WhatsApp and iMessage to see it
+1. **Owner: add the rate-limit rule on `/api/count`** in Vercel (Firewall, one rule: 10 requests
+   per 60 s per IP, answer 429). Claude's connector was blocked from changing firewall settings.
+
+2. Owner: scan a QR with a real phone; send a long link through WhatsApp and iMessage to see it
    stays clickable.
-2. Owner tests the new version on his phone: PICK FROM PHOTO, the new AUTO, the new copy.
+3. Owner tests the new version on his phone: PICK FROM PHOTO, the new AUTO, the new copy.
+4. Owner: open `/make/?nocount` once on each phone and browser used for testing, so tests don't
+   count.
 
 ## Parked
 - **Idea (owner, 14 Nov 2026): a small "buy me a coffee" button** at the end of /make, for people

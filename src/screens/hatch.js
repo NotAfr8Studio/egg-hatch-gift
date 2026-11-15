@@ -10,6 +10,7 @@ import { play, jumpLength, facePos } from '../world/hatchling.js';
 import { play as playMusic } from '../core/music.js';
 import { GIFT } from '../config.js';
 import { S } from '../strings.en.js';
+import { countGift } from '../core/count.js';
 
 function elastic(x) { if (x <= 0) return 0; if (x >= 1) return 1; return Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * (2 * Math.PI) / 3) + 1; }
 
@@ -38,6 +39,7 @@ export function hatchStep(dt) {
     if (t < POP) { st.wig = 1.4; fx.shake = 0.05 + t * 0.12; }
     if (t >= POP && st.step === 0) {
       st.step = 1; st.unlocked = true; save(true); startFlash(); eggGroup.visible = false;
+      countGift('hatched', GIFT.id); // once per phone, never the demo egg, see core/count.js
       showHero(true, 0.01, 'pose'); fx.shake = 0.3; playMusic('rap');
       faceShot();
       shards.forEach(function (s, i) {

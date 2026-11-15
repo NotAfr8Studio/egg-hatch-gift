@@ -8,6 +8,8 @@ import { parts, tufts, TOP, setStage } from '../world/stage.js';
 import { runQuiz } from '../games/quiz.js';
 import { setScreen } from '../core/nav.js';
 import { S } from '../strings.en.js';
+import { GIFT } from '../config.js';
+import { countGift } from '../core/count.js';
 
 // Milestone message for a tap count, or null.
 export function msgAt(n) {
@@ -37,6 +39,7 @@ function popTufts() { if (!ok) return; for (var i = 0; i < 4; i++) tufts[Math.fl
 
 export function tapEgg() {
   st.taps++; hud(); st.wig = 1; st.squash = 1; fx.shake = 0.03 + st.taps / st.total * 0.09;
+  countGift('tapped', GIFT.id); // the friend started tapping: once per phone, see core/count.js
   beep(180 * Math.pow(2, st.taps / st.total * 1.6), 0.06, 'square', 0.035);
   spawnPuff(); popTufts();
   if (stageFor(st.taps) !== st.stage) { setStage(); beep(90, 0.18, 'triangle', 0.08); fx.shake = 0.2; }

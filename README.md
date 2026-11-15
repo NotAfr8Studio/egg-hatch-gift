@@ -14,6 +14,13 @@ is packed into the link itself, in the part after the `#`, which browsers never 
 That also means: whoever has the link or QR code can open the egg and the gift. Only send it to
 the birthday person. And never open a gift card claim link yourself: signing in can claim it.
 
+**What the site does count:** how many eggs get made, opened, tapped and hatched. At each of those
+moments the page sends one word (`made`, `opened`, `tapped` or `hatched`) to `api/count.js`, and
+nothing else: nothing from the link, nothing about the person, no cookies. Each egg counts once
+per phone, and not at all on the phone that made it. On your own copy the counter needs a Redis store (Upstash from
+the Vercel Marketplace, environment variable prefix `COUNTER`); without one, nothing is counted
+and the eggs work the same.
+
 ## Run it yourself
 
 You need Node.js 20 or newer.
@@ -31,7 +38,8 @@ On another host, set the same headers there.
 In development a DEV button opens a panel to jump to any screen, skip taps and try faces.
 
 Want one fixed egg instead of links? Fill in `OWN_GIFT` in `src/config.js` and put a face at
-`public/face.png` (384 x 320, transparent background). It is gitignored on purpose: keep your
+`public/face.png` (384 x 320, transparent background; restart `npm run dev` after adding it,
+because the site checks for it when it starts). It is gitignored on purpose: keep your
 friend's face out of your commits. Anything in `OWN_GIFT` ends up readable in the built site.
 
 ## How the link works
