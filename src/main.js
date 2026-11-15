@@ -1,3 +1,4 @@
+import './fonts/pixel.css';
 import './style.css';
 import { st, fx, pendingEvent, setTotal } from './core/state.js';
 import { loadSave, save, useSaveKey } from './core/save.js';

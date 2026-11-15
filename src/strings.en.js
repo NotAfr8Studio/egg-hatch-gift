@@ -127,10 +127,12 @@ export const S = {
     replay: 'REPLAY HATCH',
     again: 'START OVER',
     cardHint: 'Press and hold the card, then tap Save to Photos.',
+    // the real site behind REDEEM / CLAIM, whatever the shop name on the button says
+    redeemSite: (site) => 'REDEEM opens ' + site + '.',
     cardKind: (store) => store ? store + ' GIFT' : 'A GIFT FOR YOU',
     claimBy: (d) => 'CLAIM BEFORE ' + d,
     claim: (store) => store ? 'CLAIM ON ' + store : 'CLAIM GIFT',
-    claimHint: 'Tap the button and follow the steps to claim it.',
+    claimHint: (site) => 'Opens ' + site + '. Follow the steps there to claim it.',
     redeem: (store) => store ? 'REDEEM ON ' + store : 'REDEEM',
     missing: 'No gift card inside this egg. Your present comes another way!',
     demoKind: 'DEMO EGG',

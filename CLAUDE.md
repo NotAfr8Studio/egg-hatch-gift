@@ -14,7 +14,11 @@ Current state: `docs/_hot.md`. Why things are the way they are: `docs/project-hi
 - **A gift lives only in its link** (`src/gift/codec.js`). Never add a server, database or
   analytics that would see a gift without a decision recorded in project-history.
 - Anything read from a link is untrusted: text goes through `textContent` or `esc()` in
-  `ui/dialog.js`, links through `safeUrl()` (http/https only).
+  `ui/dialog.js`, links through `safeUrl()` (https only). The gift card names the real site a
+  button opens (`siteOf()`): the shop name is typed by whoever made the egg.
+- **Everything loads from this site.** `vercel.json` sets a Content-Security-Policy that blocks
+  any other source. A new font, script, image or API elsewhere must be added there on purpose;
+  `npm run preview` sends the same headers, so test there (dev does not).
 - Changing the link format: bump `VERSION` in codec.js and keep decoding the old one, or every
   egg already sent breaks.
 - Dev-only code sits behind `import.meta.env.DEV`; the production build must not contain it.

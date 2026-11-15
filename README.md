@@ -22,7 +22,11 @@ You need Node.js 20 or newer.
 npm install
 npm run dev      # game at http://localhost:5173/, the maker at http://localhost:5173/make/
 npm run build    # static site in dist/, ready for any static host
+npm run preview  # the built site, with the same security headers as the live one
 ```
+
+The security headers (which sources the browser may load anything from) live in `vercel.json`.
+On another host, set the same headers there.
 
 In development a DEV button opens a panel to jump to any screen, skip taps and try faces.
 

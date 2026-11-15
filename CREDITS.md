@@ -42,4 +42,6 @@ automated reading). Commonly described as royalty free for games; not verified h
 
 `qrcode-generator` by Kazuhiko Arase (MIT), https://github.com/kazuhikoarase/qrcode-generator
 three.js r128 (MIT), https://threejs.org
-Font: Press Start 2P by CodeMan38 (SIL Open Font License), via Google Fonts.
+Font: Press Start 2P by CodeMan38 (SIL Open Font License 1.1). Shipped with the app in
+`src/fonts/` (Google Fonts' own files, v16, downloaded 15 November 2026) instead of loaded from
+Google, which would hand every visitor's IP address to Google. Licence: `src/fonts/OFL.txt`.

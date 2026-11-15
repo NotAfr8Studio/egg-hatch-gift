@@ -50,7 +50,7 @@ body { visibility: visible; position: fixed; inset: 0; -webkit-touch-callout: no
 .cardview.show { display: flex; }
 .cv-in { width: calc(var(--u) * 128); display: flex; flex-direction: column; align-items: center; gap: calc(var(--u) * 8); }
 #cardimg { display: block; width: 100%; image-rendering: pixelated; box-shadow: 0 calc(var(--u) * 3) 0 rgba(0, 0, 0, .35); -webkit-touch-callout: default; -webkit-user-select: auto; user-select: auto; }
-.cv-t { margin: 0; color: var(--cream); font-size: calc(var(--u) * 6); line-height: calc(var(--u) * 10); text-align: center; }
+.cv-t { margin: 0; color: var(--cream); font-size: calc(var(--u) * 6); line-height: calc(var(--u) * 10); text-align: center; overflow-wrap: anywhere; }
 .cv-b { display: flex; gap: calc(var(--u) * 6); }
 .btn2 { background: var(--cream); color: var(--ink); padding: calc(var(--u) * 4) calc(var(--u) * 5); box-shadow: 0 0 0 var(--u) var(--ink); cursor: pointer; font-size: calc(var(--u) * 7); line-height: calc(var(--u) * 9); }
 .btn2:hover { background: var(--butter); }

@@ -1,3 +1,4 @@
+import '../fonts/pixel.css';
 import './make.css';
 import { encodeGift, quantize, LIMIT, byteLength, clean, safeUrl, clipBytes, TAPS } from '../gift/codec.js';
 import { createFaceEditor, readPhoto } from './face.js';

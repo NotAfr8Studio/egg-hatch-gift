@@ -101,3 +101,61 @@ Tested on one face only, so PICK FROM PHOTO is the real safety net.
 ## 2026-11-14: No emoji, anywhere
 Owner's call, firmly: no emoji in any copy. The egg emoji in the /make intro looked bad. This
 overrides the emoji habit described in voice.md for this project.
+
+## 2026-11-15: Counting eggs with our own counter, nothing from the link
+Owner wants to know how many eggs get made, opened and hatched (the parked coffee button also
+waits on "does anyone use the maker"). Chosen: a tiny function in this repo plus a small Redis
+store (Upstash, added through the Vercel Marketplace) that adds 1 to a named count, per day and
+in total. It accepts only one word from a fixed list: `made`, `opened`, `hatched`. Nothing read
+from the link is ever sent: not the name, face, gift card, store, amount, date, tap count or gift
+id. Nothing about the person either: no cookies, no visitor id, no country, no device. Counting
+runs on the live site only, never in dev or in the /make preview.
+
+Considered: Vercel Web Analytics. Rejected: on the free plan it has no custom events, so it
+cannot count "made" or "hatched"; it keeps one month of data, so no running total; and it
+records country, browser and device on every visit. Its script also reads the page's full
+address, and the docs don't say whether the part after `#` is left out.
+
+This amends Option A (2026-11-14): there is a server again, but it never sees a gift. Cost: anyone
+who finds the address can inflate the counts. Fine for a fun number; stopping it properly would
+mean storing visitors' addresses, which is the opposite of the point. Damaged links are not
+counted: the owner doesn't care about that number.
+
+Sources, read 2026-11-15: vercel.com/docs/analytics/custom-events ("Custom Events are available
+on Enterprise and Pro plans"); vercel.com/docs/analytics/limits-and-pricing (Hobby: 50,000
+events a month, 1 month reporting window); vercel.com/docs/analytics/privacy-policy (collects
+URL, query params "filtered", geolocation, OS, browser, device type; no mention of the `#` part);
+upstash.com/pricing/redis ("Free tier includes 250MB data size and 500K commands per month").
+
+## 2026-11-15: Security pass: the card names the real site, https only, font and policy local
+An attack pass on the app (reading the code as someone trying to misuse it). The core held up:
+link text can't run code, only web links become buttons, unzipping is capped, the gift never
+reaches a server, `npm audit` is clean. The real risk is misuse of the maker: anyone can make
+an egg on this domain saying "CLAIM ON STEAM, €100" with a link to a fake login page, and the
+shop name on the button is just text they typed. Owner's call: fix it without any redesign.
+
+- **The card's hint line names the site the button really opens** ("Opens
+  store.steampowered.com. Follow the steps there to claim it."; for a code, "REDEEM opens ...").
+  It is the hostname as the browser reads it, so look-alike letters show as `xn--`, and very long
+  names keep their end, which says whose site it is. It breaks after dots so it wraps cleanly.
+  This is not the warnings removed on 2026-11-14: it says where, not how to claim.
+  Considered: only allowing known gift card sites. Rejected: it undoes "any gift card works".
+  Considered: an "only tap if you trust the sender" line. Not done: that is a warning again.
+- **https only.** `safeUrl()` drops `http:` links. An egg made before this with an `http` link
+  loses its button and says the present comes another way (none are known to exist).
+- **Direction marks stripped.** `clean()` also drops the invisible characters that can make a
+  shop name or amount read backwards.
+- **Font shipped with the app.** Press Start 2P came from Google's servers, which hands every
+  visitor's IP address to Google (a German court ruled against this in 2022; general knowledge,
+  not checked this session). Same files and ranges, now in `src/fonts/`.
+- **Content-Security-Policy** in `vercel.json`: the browser only loads anything from this site,
+  and no other site can show the game in a frame. A second line of defence if a future change
+  ever lets link text into the page as code. `npm run preview` sends the same headers.
+- **/make note:** "There's no copy anywhere else, so hang on to the link." and "photo and all".
+
+Tested in a separate headless Chrome against `npm run preview` at 390 x 844: headers on every
+page, nothing blocked, every request to this site only, /make makes an egg with a photo, an
+`http` link is refused, five crafted eggs show the right site on the card and fit the screen.
+Sources: the app-security notes in the owner's library (reels by @chris.raroque on adversarial
+review, @securedbycasco on IDOR, @adilet.fndr and @raycfu on costly mistakes and legal traps,
+@peterstewiestartup on scoring instead of blocking).

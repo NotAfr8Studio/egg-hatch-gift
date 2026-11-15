@@ -92,12 +92,20 @@ export function clipBytes(s, max) {
   return enc.encode(out);
 }
 export function byteLength(s) { return new TextEncoder().encode(String(s || '')).length; }
-// Strip control characters (line breaks included) from anything a link can carry.
-export function clean(s) { return String(s || '').replace(/[\u0000-\u001f\u007f-\u009f]/g, '').trim(); }
-// Only real web links may become a button. Anything else (javascript:, data:...) is dropped.
+// Strip control characters (line breaks included) from anything a link can carry, and the
+// invisible direction marks that could flip a shop name or amount to read backwards.
+export function clean(s) { return String(s || '').replace(/[\u0000-\u001f\u007f-\u009f؜‎‏‪-‮⁦-⁩]/g, '').trim(); }
+// Only secure web links may become a button. Anything else (http:, javascript:, data:...) is dropped.
 export function safeUrl(s) {
   s = clean(s); if (!s) return '';
-  try { var u = new URL(s); return (u.protocol === 'https:' || u.protocol === 'http:') ? u.href : ''; } catch (e) { return ''; }
+  try { var u = new URL(s); return u.protocol === 'https:' ? u.href : ''; } catch (e) { return ''; }
+}
+// The site a link really opens, for the gift card ("Opens store.steampowered.com"). Whatever
+// the shop field says, this is the truth: a fake claim page can't hide its own address. Look-alike
+// letters come out as xn--..., the browser's own spelling. Very long names keep their end, which
+// is the part that says whose site it is.
+export function siteOf(url) {
+  try { var h = new URL(url).hostname.replace(/^www\./, ''); return h.length > 40 ? '...' + h.slice(-40) : h; } catch (e) { return ''; }
 }
 
 // ---------- compression (built into browsers: Chrome 103+, Safari 16.4+, Firefox 113+) ----------

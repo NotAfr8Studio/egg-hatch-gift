@@ -4,6 +4,7 @@ import { save } from '../core/save.js';
 import { say, choose, floatText } from '../ui/dialog.js';
 import { GIFT } from '../config.js';
 import { prettyDate } from '../gift/load.js';
+import { siteOf } from '../gift/codec.js';
 import { S } from '../strings.en.js';
 import { setScreen } from '../core/nav.js';
 
@@ -56,7 +57,12 @@ function setCardButtons() {
   $('redeem').hidden = mode !== 'code' || !GIFT.redeem; $('redeem').textContent = S.home.redeem(GIFT.store);
   if (GIFT.redeem) $('redeem').href = GIFT.redeem; else $('redeem').removeAttribute('href');
   $('makeown').hidden = mode !== 'demo';
-  $('cvhint').textContent = mode === 'url' ? S.home.claimHint : mode === 'code' ? S.home.cardHint : mode === 'demo' ? S.home.demoHint : S.home.missing;
+  // the card says which site a button really opens: the shop name on the button is typed by whoever made the egg.
+  // An invisible break point after each dot lets a long address wrap as "store." / "steampowered.com".
+  var site = function (u) { return siteOf(u).replace(/\.(?!\.)/g, '.​'); };
+  $('cvhint').textContent = mode === 'url' ? S.home.claimHint(site(GIFT.url))
+    : mode === 'code' ? S.home.cardHint + (GIFT.redeem ? ' ' + S.home.redeemSite(site(GIFT.redeem)) : '')
+    : mode === 'demo' ? S.home.demoHint : S.home.missing;
 }
 export function openCard() {
   var show = function () { setCardButtons(); cardURL = drawCard(); $('cardimg').src = cardURL; $('cardview').classList.add('show'); };
