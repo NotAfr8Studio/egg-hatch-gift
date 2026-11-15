@@ -11,8 +11,9 @@ counting `made`, `opened`, `tapped`, `hatched`; see project-history. Upstash con
 `COUNTER`, production + preview). Tested: 17 flows locally, end to end on the `egg-counter`
 preview against the real store (test numbers), then live with `?nocount` (nothing sent, no
 errors, real numbers 0). Read them at `/api/count?days=7`.
-**2026-11-16:** daily allowance in `api/count.js` made and tested, committed, not pushed. The
-firewall rule is still to add (Next 1).
+**2026-11-16: both spam limits live on the owner's go.** Vercel firewall rule "Egg counter
+limit" (path equals `/api/count`, 10 requests per IP per 600 s, fixed window, 429; published by
+the owner in the dashboard, not in this repo) and the daily allowance in `api/count.js`.
 
 **2026-11-15: security fixes deployed on the owner's go.** Card names the real site behind
 CLAIM / REDEEM, https only, font shipped with the app, Content-Security-Policy in `vercel.json`,
@@ -22,14 +23,10 @@ Decided the same day: eggs don't expire (see project-history). Follow-up fix: gi
 ask for the self-host `face.png` (two 404s per no-photo egg); it ships in the counter's commit.
 
 ## Next
-1. **Owner: add the rate-limit rule on `/api/count`** in Vercel (Firewall, one rule: path equals
-   `/api/count`, 10 requests per 10 minutes per IP, answer 429). Claude's connector has no access
-   to firewall settings. Then push the daily allowance commit, on the owner's go.
-
-2. Owner: scan a QR with a real phone; send a long link through WhatsApp and iMessage to see it
+1. Owner: scan a QR with a real phone; send a long link through WhatsApp and iMessage to see it
    stays clickable.
-3. Owner tests the new version on his phone: PICK FROM PHOTO, the new AUTO, the new copy.
-4. Owner: open `/make/?nocount` once on each phone and browser used for testing, so tests don't
+2. Owner tests the new version on his phone: PICK FROM PHOTO, the new AUTO, the new copy.
+3. Owner: open `/make/?nocount` once on each phone and browser used for testing, so tests don't
    count.
 
 ## Parked
@@ -50,3 +47,6 @@ ask for the self-host `face.png` (two 404s per no-photo egg); it ships in the co
 - The Content-Security-Policy blocks anything from another site, and `npm run dev` doesn't send
   it: test new outside resources with `npm run build` + `npm run preview`. The egg counter's
   call to its own function is same-site, so the policy allows it.
+- Calling `/api/count` from home (tests, curl, reading the numbers) spends your address's 10 per
+  10 minutes. Phones on the same wifi then get 429 from the counter for a while: harmless, but
+  their counts in that window are lost.
