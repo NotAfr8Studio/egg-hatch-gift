@@ -6,11 +6,11 @@
 branch `main`: **every push to main goes live.** Deployed on the owner's go, 14 Nov 2026.
 Tested live: QR decodes to the https link, the egg opens from it, taps count, saves per gift.
 
-**2026-11-15: egg counter built and tested locally (17 flows).** `api/count.js` +
-`src/core/count.js`, counting `made`, `opened`, `tapped`, `hatched`; see project-history. Upstash
-connected (prefix `COUNTER`, production + preview). Shipping on the owner's go: branch
-`egg-counter`, test on its preview against the real store, then main. Read the numbers at
-`/api/count?days=7`.
+**2026-11-15: egg counter live on the owner's go.** `api/count.js` + `src/core/count.js`,
+counting `made`, `opened`, `tapped`, `hatched`; see project-history. Upstash connected (prefix
+`COUNTER`, production + preview). Tested: 17 flows locally, end to end on the `egg-counter`
+preview against the real store (test numbers), then live with `?nocount` (nothing sent, no
+errors, real numbers 0). Read them at `/api/count?days=7`. Rate limit still to add (Next 1).
 
 **2026-11-15: security fixes deployed on the owner's go.** Card names the real site behind
 CLAIM / REDEEM, https only, font shipped with the app, Content-Security-Policy in `vercel.json`,

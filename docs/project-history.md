@@ -207,10 +207,11 @@ can be tried without touching the real counts.
 Spam: anyone can call `/api/count` and inflate the numbers, use up the free commands (counting
 then stops until next month) or, at real volume, Vercel's function allowance, and Hobby pauses
 the whole site at its limit. The counter itself must never store addresses to stop that, so
-Vercel's firewall does it: one rate-limit rule on `/api/count`, 10 requests a minute per
+Vercel's firewall should: one rate-limit rule on `/api/count`, 10 requests a minute per
 address, answered with 429. Hobby includes one such rule per project (vercel.com/docs/
 vercel-firewall/vercel-waf/rate-limiting, read 2026-11-15). The firewall keeps its own short
-tally per address; this app stores nothing.
+tally per address; this app stores nothing. Status at go-live: not set yet. Claude's Vercel
+connector was blocked from changing firewall settings, so the owner adds it in the dashboard.
 
 Tested: the function against a fake store (only the four words accepted, other sites' pages
 refused, previews kept apart, no store means a quiet 503), then the built site in Chrome, 17
