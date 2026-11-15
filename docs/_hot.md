@@ -10,17 +10,21 @@ Tested live: QR decodes to the https link, the egg opens from it, taps count, sa
 counting `made`, `opened`, `tapped`, `hatched`; see project-history. Upstash connected (prefix
 `COUNTER`, production + preview). Tested: 17 flows locally, end to end on the `egg-counter`
 preview against the real store (test numbers), then live with `?nocount` (nothing sent, no
-errors, real numbers 0). Read them at `/api/count?days=7`. Rate limit still to add (Next 1).
+errors, real numbers 0). Read them at `/api/count?days=7`.
+**2026-11-16:** daily allowance in `api/count.js` made and tested, committed, not pushed. The
+firewall rule is still to add (Next 1).
 
 **2026-11-15: security fixes deployed on the owner's go.** Card names the real site behind
 CLAIM / REDEEM, https only, font shipped with the app, Content-Security-Policy in `vercel.json`,
-/make note extended. Vercel plan: Hobby (owner, 15 Nov), which pauses at its limit, no bill.
+/make note extended. Vercel plan: Hobby (owner, 15 Nov). No bill, but over a limit every
+deployment pauses and stays paused until support or a move to Pro (docs, read 15 Nov).
 Decided the same day: eggs don't expire (see project-history). Follow-up fix: gift eggs no longer
 ask for the self-host `face.png` (two 404s per no-photo egg); it ships in the counter's commit.
 
 ## Next
-1. **Owner: add the rate-limit rule on `/api/count`** in Vercel (Firewall, one rule: 10 requests
-   per 60 s per IP, answer 429). Claude's connector was blocked from changing firewall settings.
+1. **Owner: add the rate-limit rule on `/api/count`** in Vercel (Firewall, one rule: path equals
+   `/api/count`, 10 requests per 10 minutes per IP, answer 429). Claude's connector has no access
+   to firewall settings. Then push the daily allowance commit, on the owner's go.
 
 2. Owner: scan a QR with a real phone; send a long link through WhatsApp and iMessage to see it
    stays clickable.

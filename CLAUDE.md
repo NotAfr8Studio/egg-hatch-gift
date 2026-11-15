@@ -33,5 +33,8 @@ Current state: `docs/_hot.md`. Why things are the way they are: `docs/project-hi
 - Saves are per gift: `egg-save-<id>` in localStorage, id = hash of the link.
 - Counts: the live site writes `eggs:` in Redis, previews `test:eggs:`. `?nocount` on any page
   stops that browser counting, `?count` undoes it. GET `/api/count?days=7` reads the numbers.
+- `/api/count` answers 429 for two reasons: Vercel's firewall rule (per address, set in the
+  dashboard, not in this repo) or the daily allowance (`DAILY` in `api/count.js`, until midnight
+  UTC). Both are meant; the game ignores the answer.
 - The /make preview is the real game in a frame on `/?preview`, talking by `postMessage`
   (same origin only). Nothing is saved there.

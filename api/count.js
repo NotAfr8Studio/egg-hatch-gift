@@ -10,24 +10,47 @@
 //         Cached for 5 minutes, so a busy page can't use up the store's free monthly quota.
 //
 // Redis keys (hashes, one field per word): eggs:total, eggs:2026-11-15, ...
+// and eggs:used:2026-11-15, the store commands spent that day (see DAILY).
 // Previews and branch deploys use test:eggs:... instead, so trying a change never touches the
 // real numbers. Without the store (a copy of this repo on another host) it answers 503 and the
 // game carries on: counting is never allowed to break an egg.
+//
+// Spam: Vercel's firewall limits each address on /api/count (a rule in the dashboard, see
+// project-history). The daily allowance below is the second line: whatever gets through, the
+// store's free 500K commands a month can't be spent in one go.
 
 var WORDS = ['made', 'opened', 'tapped', 'hatched'];
+
+// Store commands per day (UTC). Live 12,000, previews 1,000 (they share the one store):
+// 13,000 x 31 days = 403,000, under Upstash's free 500,000 a month. A counted moment costs 5,
+// so the live site counts around 2,400 a day before it stops until midnight UTC.
+var DAILY = process.env.VERCEL_ENV === 'production' ? 12000 : 1000;
+// The day this copy of the function saw the allowance run out. Vercel may run a few copies side
+// by side; each one finds out on its next trip to the store and stops calling it.
+var spent = '';
 
 function prefix() { return process.env.VERCEL_ENV === 'production' ? 'eggs:' : 'test:eggs:'; }
 function day(back) { return new Date(Date.now() - back * 86400000).toISOString().slice(0, 10); }
 function none(status, headers) { return new Response(null, { status: status, headers: headers }); }
 
 // One round trip to Upstash's REST API, run as a transaction: [['HINCRBY', key, field, 1], ...]
+// The same trip adds its own cost to today's tally: its commands, 2 for MULTI and EXEC (Upstash
+// doesn't say whether those count, so assume they do) and 1 for the tally itself.
 async function store(commands) {
   var url = process.env.COUNTER_KV_REST_API_URL, token = process.env.COUNTER_KV_REST_API_TOKEN;
   if (!url || !token) throw new Error('no store');
-  var r = await fetch(url + '/multi-exec', { method: 'POST', headers: { Authorization: 'Bearer ' + token }, body: JSON.stringify(commands) });
+  var today = day(0);
+  if (spent === today) throw new Error('spent');
+  var all = commands.concat([['INCRBY', prefix() + 'used:' + today, commands.length + 3]]);
+  var r = await fetch(url + '/multi-exec', { method: 'POST', headers: { Authorization: 'Bearer ' + token }, body: JSON.stringify(all) });
   if (!r.ok) throw new Error('store ' + r.status);
-  return r.json();
+  var res = await r.json();
+  var used = Array.isArray(res) && res[res.length - 1] ? +res[res.length - 1].result : 0;
+  if (used > DAILY) spent = today;
+  return res;
 }
+// Out of today's allowance: 429, "try again later". The store being away: 503.
+function failed(e) { return none(e && e.message === 'spent' ? 429 : 503); }
 
 // HGETALL answers with a flat list, ["made", "12", "opened", "9"]. Turn it into numbers.
 function numbers(flat) {
@@ -47,7 +70,7 @@ async function add(request) {
   var word = (await request.text()).trim();
   if (WORDS.indexOf(word) < 0) return none(400);
   var p = prefix();
-  try { await store([['HINCRBY', p + 'total', word, 1], ['HINCRBY', p + day(0), word, 1]]); } catch (e) { return none(503); }
+  try { await store([['HINCRBY', p + 'total', word, 1], ['HINCRBY', p + day(0), word, 1]]); } catch (e) { return failed(e); }
   return none(204);
 }
 
@@ -56,7 +79,7 @@ async function read(request) {
   var p = prefix(), commands = [['HGETALL', p + 'total']];
   for (var i = 0; i < n; i++) commands.push(['HGETALL', p + day(i)]);
   var res;
-  try { res = await store(commands); } catch (e) { return none(503); }
+  try { res = await store(commands); } catch (e) { return failed(e); }
   var body = numbers(res[0] && res[0].result);
   if (n) {
     body.days = {};

@@ -212,8 +212,61 @@ address, answered with 429. Hobby includes one such rule per project (vercel.com
 vercel-firewall/vercel-waf/rate-limiting, read 2026-11-15). The firewall keeps its own short
 tally per address; this app stores nothing. Status at go-live: not set yet. Claude's Vercel
 connector was blocked from changing firewall settings, so the owner adds it in the dashboard.
+*Changed 2026-11-16: the rule is 10 requests per 10 minutes, not per minute; the function got a
+daily allowance, so spending the free commands stops counting until midnight UTC, not until next
+month; and a Hobby pause turned out not to lift on its own. See "Rate limit and daily allowance
+for the counter" below.*
 
 Tested: the function against a fake store (only the four words accepted, other sites' pages
 refused, previews kept apart, no store means a quiet 503), then the built site in Chrome, 17
 flows: every request is one word in the body, `text/plain`, no cookie; the maker's own egg,
 repeat opens and repeat taps send nothing.
+
+## 2026-11-16: Rate limit and daily allowance for the counter
+The counter is the only part of the app that reaches a server, so it's the one thing a script
+can spam. What that can cost, from Vercel's docs: Hobby includes 1,000,000 function runs a month,
+and a Hobby account over a limit is paused. It stays paused "indefinitely unless you take
+action", every deployment goes with it (eggs included), and getting back means contacting Vercel
+support or moving to the paid Pro plan. Earlier notes said the pause lifts with the month; it
+doesn't.
+
+Two lines of defence, neither of which stores an address:
+
+1. **A firewall rule on `/api/count`** (reads and writes): 10 requests per address per 10
+   minutes, then 429. Added by the owner in the Vercel dashboard, because the Vercel connector has
+   no access to firewall settings. Hobby gets one rate-limit rule per project, counted by
+   address, with windows of up to 10 minutes. Blocked traffic "does not reach your application".
+   Why 10 minutes and not 1: per minute lets one script through 14,400 times a day, nearly half
+   the monthly function allowance over a month; per 10 minutes it's 1,440 a day, about 45,000 a
+   month, under 5%. A real person sends a handful. Phones sharing one address on a mobile network
+   can lose the odd count, and the game doesn't notice.
+   Rejected: Vercel's `@vercel/firewall` package (it checks inside the function, which has then
+   already run and been counted), and spending the one rule on the whole site (one address could
+   then call the counter far more often, and every allowed request on the site would count
+   against the rule's own 1,000,000 a month).
+2. **A daily allowance in the function.** Every trip to Upstash also adds its own cost to
+   `eggs:used:<day>` in the same round trip. Past 12,000 commands a day (previews 1,000: they
+   share the store) the function stops calling the store and answers 429 until midnight UTC.
+   13,000 x 31 days = 403,000, under the free 500,000. MULTI and EXEC are counted as commands
+   because Upstash's docs don't say they aren't. Spending the free commands now costs a day of
+   counting instead of the month.
+
+The game ignores the answer either way. Tested on the built site with every counter call refused
+(429, then 503): the egg kept counting taps, /make still finished the egg, no errors on the page,
+only Chrome's own network line in the developer console. The allowance was tested against a fake
+store: it stops at the limit, a fresh copy of the function spends one trip to find out, the next
+day counts again, previews keep their own tally.
+
+Not covered: the big files. The music is 6 MB of a 7 MB playthrough, and Hobby includes 100 GB
+of transfer a month. Someone downloading it over and over, slowly enough not to look like an
+attack, could still use that up. Only Vercel's automatic flood protection and Attack Mode stand
+in the way; shrinking the music is the real lever.
+
+Sources, read 2026-11-15: vercel.com/docs/vercel-firewall/vercel-waf/rate-limiting (updated
+2026-08-28; "available on all plans", Hobby "1 per project", "Minimum: 10s, Maximum: 10mins");
+vercel.com/docs/vercel-firewall/firewall-concepts ("The request does not reach your
+application"); vercel.com/docs/vercel-firewall/vercel-waf/usage-and-pricing; vercel.com/docs/
+vercel-firewall/vercel-waf/rate-limiting-sdk; vercel.com/docs/plans/hobby (updated 2026-11-12;
+"First 1,000,000" function invocations); vercel.com/docs/functions/usage-and-pricing ("remains in
+this state indefinitely unless you take action"); upstash.com/pricing/redis;
+upstash.com/docs/redis/troubleshooting/max_requests_limit.
